@@ -1,0 +1,119 @@
+.wcsl-overview-page .wcsl-filter-form {
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border: 1px solid #ccd0d4;
+}
+
+.wcsl-overview-page .wcsl-filter-form label {
+    margin-right: 5px;
+}
+
+.wcsl-overview-page .wcsl-filter-form select,
+.wcsl-overview-page .wcsl-filter-form input[type="submit"] {
+    margin-right: 15px;
+}
+
+.wcsl-overview-page h2 {
+    margin-top: 30px;
+}
+
+
+
+.description {
+    font-weight: 700;
+}
+
+
+/* In assets/css/admin-style.css */
+.wcsl-notifications-table tr.wcsl-notification-unread td {
+    font-weight: bold;
+}
+
+.wcsl-notifications-table tr.wcsl-notification-unread {
+    background-color: #fffbe4;
+    /* Light yellow for unread */
+}
+
+
+
+/* WCSL Reports Page Styles */
+/* In assets/css/admin-style.css */
+
+/* WCSL Reports Page Styles */
+.wcsl-reports-page .wcsl-reports-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    margin-top: 20px;
+    margin-bottom: 50px;
+    /* <<< ADD OR INCREASE THIS to push footer down */
+}
+
+.wcsl-reports-page .wcsl-report-block {
+    background-color: #fff;
+    border: 1px solid #e5e5e5;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, .04);
+    padding: 0;
+}
+
+.wcsl-reports-page .wcsl-report-block h2 {
+    font-size: 16px;
+    padding: 12px 15px;
+    margin: 0;
+    border-bottom: 1px solid #eee;
+}
+
+.wcsl-reports-page .wcsl-chart-container {
+    padding: 20px;
+    height: 300px;
+    /* Or adjust as needed */
+    position: relative;
+    min-height: 250px;
+    /* Ensure it has some minimum height even if data is small */
+}
+
+.wcsl-reports-page .wcsl-chart-container canvas {
+    max-width: 100%;
+}
+
+/* Error/No Data Messages within chart containers */
+.wcsl-chart-error,
+.wcsl-chart-nodata {
+    padding: 20px;
+    text-align: center;
+    color: #777;
+    display: flex;
+    /* For vertical centering of text */
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    /* Fill container height */
+    min-height: 100px;
+    /* Ensure some visible height for the message */
+}
+
+/* Data Metric Container (for Total Billable Hours) */
+.wcsl-reports-page .wcsl-data-metric-container {
+    padding: 20px;
+    text-align: center;
+    min-height: 150px;
+    /* Give it some height */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.wcsl-reports-page .wcsl-metric-value {
+    font-size: 36px;
+    font-weight: 600;
+    color: #39618C;
+    margin: 10px 0 5px 0;
+}
+
+.wcsl-reports-page .wcsl-metric-description {
+    font-size: 14px;
+    color: #555;
+    margin-top: 0;
+}

@@ -1,0 +1,96 @@
+/* assets/css/print-style.css */
+@page {
+
+    @top-left { content: ""; }
+    @top-center { content: ""; }
+    @top-right { content: ""; }
+    @bottom-left { content: ""; }
+    @bottom-center { content: ""; } /* This is often where the URL appears */
+    @bottom-right { content: ""; }
+}
+
+body.wcsl-print-body {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 10pt;
+    line-height: 1.4;
+    margin: 20mm; /* Typical print margins */
+    background-color: #fff; /* Ensure white background */
+    color: #000; /* Ensure black text */
+}
+
+.print-report-container {
+    width: 100%;
+}
+
+.report-header {
+    text-align: center;
+    margin-bottom: 25px;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 15px;
+}
+.report-header h1 {
+    font-size: 16pt;
+    margin: 0 0 5px 0;
+    color: #000;
+}
+.report-header h2 {
+    font-size: 12pt;
+    margin: 0;
+    color: #333;
+}
+
+h3 {
+    font-size: 11pt;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 5px;
+    color: #000;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    font-size: 9pt;
+}
+
+th, td {
+    border: 1px solid #666; /* Darker borders for print */
+    padding: 5px 8px;
+    text-align: left;
+    vertical-align: top;
+}
+
+thead th {
+    background-color: #e9e9e9; /* Light gray for table headers */
+    font-weight: bold;
+    color: #000;
+}
+
+a {
+    color: #000; /* Make links black for print unless specifically styled */
+    text-decoration: none; /* Often remove underline for print */
+}
+
+.print-report-container table td > a[href] { /* Targets 'a' tags with an href attribute directly inside a td */
+    color: #0000EE; /* Standard link blue */
+    text-decoration: underline;
+}
+.print-report-container table td > a[href]:visited { /* Optional: style for visited links if browser tracks this for print */
+    color: #551A8B; /* Standard visited link purple */
+}
+
+/* Hide elements not for print (if any were accidentally included) */
+@media print {
+    .no-print, .no-print * {
+        display: none !important;
+    }
+    /* Attempt to control page breaks */
+    h3, table {
+        page-break-inside: avoid;
+    }
+    table + h3 { /* Add some space before a new section if it follows a table */
+         page-break-before: auto; /* or always if you want each section on new page */
+    }
+}

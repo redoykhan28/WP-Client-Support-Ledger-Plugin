@@ -1,0 +1,105 @@
+<?php
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+
+/**
+ * Register a custom post type called "client".
+ *
+ * @see get_post_type_labels() for label keys.
+ */
+function wcsl_register_client_cpt() {
+    $labels = array(
+        'name'                  => _x( 'Clients', 'Post type general name', 'wp-client-support-ledger' ),
+        'singular_name'         => _x( 'Client', 'Post type singular name', 'wp-client-support-ledger' ),
+        'menu_name'             => _x( 'Clients', 'Admin Menu text', 'wp-client-support-ledger' ),
+        'name_admin_bar'        => _x( 'Client', 'Add New on Toolbar', 'wp-client-support-ledger' ),
+        'add_new'               => __( 'Add New', 'wp-client-support-ledger' ),
+        'add_new_item'          => __( 'Add New Client', 'wp-client-support-ledger' ),
+        'new_item'              => __( 'New Client', 'wp-client-support-ledger' ),
+        'edit_item'             => __( 'Edit Client', 'wp-client-support-ledger' ),
+        'view_item'             => __( 'View Client', 'wp-client-support-ledger' ),
+        'all_items'             => __( 'All Clients', 'wp-client-support-ledger' ),
+        'search_items'          => __( 'Search Clients', 'wp-client-support-ledger' ),
+        'parent_item_colon'     => __( 'Parent Clients:', 'wp-client-support-ledger' ),
+        'not_found'             => __( 'No clients found.', 'wp-client-support-ledger' ),
+        'not_found_in_trash'    => __( 'No clients found in Trash.', 'wp-client-support-ledger' ),
+        'featured_image'        => _x( 'Client Logo', 'Overrides the “Featured Image” phrase for this post type. Added in 4.3', 'wp-client-support-ledger' ),
+        'set_featured_image'    => _x( 'Set client logo', 'Overrides the “Set featured image” phrase for this post type. Added in 4.3', 'wp-client-support-ledger' ),
+        'remove_featured_image' => _x( 'Remove client logo', 'Overrides the “Remove featured image” phrase for this post type. Added in 4.3', 'wp-client-support-ledger' ),
+        'use_featured_image'    => _x( 'Use as client logo', 'Overrides the “Use as featured image” phrase for this post type. Added in 4.3', 'wp-client-support-ledger' ),
+        'archives'              => _x( 'Client archives', 'The post type archive label used in nav menus. Default “Post Archives”. Added in 4.4', 'wp-client-support-ledger' ),
+        'insert_into_item'      => _x( 'Insert into client', 'Overrides the “Insert into post”/”Insert into page” phrase (used when inserting media into a post). Added in 4.4', 'wp-client-support-ledger' ),
+        'uploaded_to_this_item' => _x( 'Uploaded to this client', 'Overrides the “Uploaded to this post”/”Uploaded to this page” phrase (used when viewing media attached to a post). Added in 4.4', 'wp-client-support-ledger' ),
+        'filter_items_list'     => _x( 'Filter clients list', 'Screen reader text for the filter links heading on the post type listing screen. Default “Filter posts list”/”Filter pages list”. Added in 4.4', 'wp-client-support-ledger' ),
+        'items_list_navigation' => _x( 'Clients list navigation', 'Screen reader text for the pagination heading on the post type listing screen. Default “Posts list navigation”/”Pages list navigation”. Added in 4.4', 'wp-client-support-ledger' ),
+        'items_list'            => _x( 'Clients list', 'Screen reader text for the items list heading on the post type listing screen. Default “Posts list”/”Pages list”. Added in 4.4', 'wp-client-support-ledger' ),
+    );
+
+    $args = array(
+        'labels'             => $labels,
+        'public'             => true, // Set to true if you want clients to have individual pages (e.g., example.com/client/hotel-perla)
+                                     // For now, we can set it to true. If we only manage them in admin, can be false.
+        'publicly_queryable' => true,
+        'show_ui'            => true, // Show in admin UI
+        'show_in_menu'       => false, // We will create our own top-level menu later
+        'query_var'          => true,
+        'rewrite'            => array( 'slug' => 'client' ), // URL slug
+        'capability_type'    => 'post',
+        'has_archive'        => true, // Enable client archives (e.g., example.com/clients/)
+        'hierarchical'       => false, // Clients are not hierarchical like pages
+        'menu_position'      => null,
+        'supports'           => array( 'title', 'thumbnail' ), // 'title' = Client Name, 'editor' for notes, 'thumbnail' for logo
+        'show_in_rest'       => true, // Enable for Gutenberg editor and REST API
+    );
+
+    register_post_type( 'client', $args );
+}
+add_action( 'init', 'wcsl_register_client_cpt' );
+
+
+
+
+/**
+ * Register a custom post type called "client_task".
+ */
+function wcsl_register_client_task_cpt() {
+    $labels = array(
+        'name'                  => _x( 'Client Tasks', 'Post type general name', 'wp-client-support-ledger' ),
+        'singular_name'         => _x( 'Client Task', 'Post type singular name', 'wp-client-support-ledger' ),
+        'menu_name'             => _x( 'Client Tasks', 'Admin Menu text', 'wp-client-support-ledger' ),
+        'name_admin_bar'        => _x( 'Client Task', 'Add New on Toolbar', 'wp-client-support-ledger' ),
+        'add_new'               => __( 'Add New Task', 'wp-client-support-ledger' ),
+        'add_new_item'          => __( 'Add New Client Task', 'wp-client-support-ledger' ),
+        'new_item'              => __( 'New Client Task', 'wp-client-support-ledger' ),
+        'edit_item'             => __( 'Edit Client Task', 'wp-client-support-ledger' ),
+        'view_item'             => __( 'View Client Task', 'wp-client-support-ledger' ),
+        'all_items'             => __( 'All Client Tasks', 'wp-client-support-ledger' ),
+        'search_items'          => __( 'Search Client Tasks', 'wp-client-support-ledger' ),
+        'parent_item_colon'     => __( 'Parent Client Tasks:', 'wp-client-support-ledger' ),
+        'not_found'             => __( 'No client tasks found.', 'wp-client-support-ledger' ),
+        'not_found_in_trash'    => __( 'No client tasks found in Trash.', 'wp-client-support-ledger' ),
+        // You can add more specific labels if needed, similar to the 'client' CPT
+    );
+
+    $args = array(
+        'labels'             => $labels,
+        'public'             => false, // Tasks are usually not public individual pages
+        'publicly_queryable' => false,
+        'show_ui'            => true,  // Show in admin UI
+        'show_in_menu'       => false, // Will be added under our custom top-level menu
+        'query_var'          => true,
+        'rewrite'            => array( 'slug' => 'client-task' ),
+        'capability_type'    => 'post',
+        'has_archive'        => false, // No public archive page for tasks
+        'hierarchical'       => false,
+        'menu_position'      => null,
+        'supports'           => array( 'title' ), // 'title' = Task Title, 'editor' for details/notes
+                                                            // We'll add other fields like hours, client link, date via meta boxes
+        'show_in_rest'       => true, // Good for future flexibility
+    );
+
+    register_post_type( 'client_task', $args );
+}
+add_action( 'init', 'wcsl_register_client_task_cpt' );

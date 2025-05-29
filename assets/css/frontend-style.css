@@ -1,0 +1,601 @@
+/* assets/css/frontend-style.css */
+
+/* --- General Reset/Base for the Scope --- */
+.wcsl-login-form-container *,
+.wcsl-login-form-container *::before,
+.wcsl-login-form-container *::after,
+.wcsl-report-container *,
+.wcsl-report-container *::before,
+.wcsl-report-container *::after {
+    box-sizing: border-box;
+}
+
+/* --- Login Form Styles (using new primary color) --- */
+.wcsl-login-form-container {
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    padding: 35px 40px;
+    max-width: 420px;
+    margin: 60px auto;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    text-align: left;
+}
+
+.wcsl-login-form-container h3 {
+    color: #333333;
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 26px;
+    font-weight: 600;
+}
+
+.wcsl-login-form-container p {
+    margin-bottom: 20px;
+    line-height: 1.6;
+    color: #555;
+}
+
+.wcsl-login-form-container p:last-child {
+    margin-bottom: 0;
+}
+
+.wcsl-login-form-container label {
+    display: block;
+    margin-bottom: 8px;
+    color: #444444;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.wcsl-login-form-container input[type="text"],
+.wcsl-login-form-container input[type="password"] {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+    font-size: 15px;
+    color: #333;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.wcsl-login-form-container input[type="text"]:focus,
+.wcsl-login-form-container input[type="password"]:focus {
+    border-color: #39618C;
+    /* New Primary Color */
+    box-shadow: 0 0 0 3px rgba(57, 97, 140, 0.25);
+    /* Adjusted focus glow */
+    outline: none;
+}
+
+.wcsl-login-form-container .wcsl-login-remember {
+    margin-top: 15px;
+    margin-bottom: 25px;
+}
+
+.wcsl-login-form-container .wcsl-login-remember label {
+    font-weight: normal;
+    color: #555555;
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.wcsl-login-form-container .wcsl-login-remember input[type="checkbox"] {
+    margin-right: 8px;
+    width: auto;
+}
+
+.wcsl-login-form-container .wcsl-login-submit input[type="submit"].button-primary,
+.wcsl-login-form-container .wcsl-login-submit input[type="submit"].wcsl-login-button {
+    background-color: var(--wcsl-button-bg, #39618C);
+    color: var(--wcsl-button-text, #FFFFFF);
+    border: none;
+    padding: 12px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    width: 100%;
+    border-radius: 4px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: background-color 0.3s ease;
+}
+
+.wcsl-login-form-container .wcsl-login-submit input[type="submit"].button-primary:hover,
+.wcsl-login-form-container .wcsl-login-submit input[type="submit"].wcsl-login-button:hover {
+    background-color: #060708;
+}
+
+.wcsl-login-error {
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    padding: 15px;
+    margin-bottom: 20px;
+    color: #721c24;
+    border-radius: 4px;
+    text-align: left;
+}
+
+.wcsl-login-error br {
+    margin-bottom: 5px;
+    display: block;
+}
+
+.wcsl-lost-password {
+    text-align: center;
+    margin-top: 25px;
+    font-size: 14px;
+}
+
+.wcsl-lost-password a {
+    color: #39618C;
+    /* New Primary Color */
+    text-decoration: none;
+}
+
+.wcsl-lost-password a:hover {
+    text-decoration: underline;
+}
+
+
+/* --- Report Container Styles (using new primary color) --- */
+.wcsl-report-container {
+    background-color: var(--wcsl-container-bg, #39618C); /* Fallback to default */;
+    color: #ffffff;
+    padding: 30px;
+    margin: 40px 0;
+    border-radius: 20px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.wcsl-report-container h2 {
+    margin-top: 20px;
+    margin-bottom: 30px;
+    font-size: 26px;
+    color: #ffffff;
+    text-align: center;
+    padding-bottom: 20px;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+/* Frontend Filter Form (Side-by-side flex) */
+.wcsl-frontend-filter-form {
+    margin-bottom: 30px;
+    padding: 20px 25px;
+    background-color: #ffffff;
+    border: none;
+    border-radius: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    /* Allow wrapping on smaller screens */
+    align-items: center;
+    /* Vertically align items in a row */
+    gap: 10px 15px;
+    /* Reduced gap slightly */
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+}
+
+/* Group label and select together for better flex behavior */
+.wcsl-filter-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    /* Space between label and select */
+    flex-grow: 1;
+    /* Allow groups to grow to fill space */
+}
+
+.wcsl-frontend-filter-form label {
+    margin-right: 0;
+    /* Removed margin-right as gap handles it */
+    font-weight: 500;
+    color: #333;
+    font-size: 14px;
+    white-space: nowrap;
+    /* Prevent label from wrapping */
+}
+
+.wcsl-frontend-filter-form select {
+    padding: 10px 12px;
+    border-radius: 6px;
+    border: 1px solid #dcdcdc;
+    font-size: 14px;
+    background-color: #fff;
+    color: #333;
+    min-width: 120px;
+    /* Minimum width for select boxes */
+    flex-grow: 1;
+    /* Allow select to grow */
+}
+
+.wcsl-frontend-filter-form input[type="submit"].button {
+    background-color: var(--wcsl-button-bg, #39618C); /* Fallback */
+    color: var(--wcsl-button-text, #fff);       /* Fallback */
+    border-color: var(--wcsl-button-bg, #39618C);  /* Fallback or calculated darker shade */
+    padding: 10px 20px;
+    /* More horizontal padding for button */
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+    margin-left: auto;
+    /* Pushes button to the right if space allows on larger screens */
+    flex-shrink: 0;
+    /* Prevent button from shrinking */
+}
+
+.wcsl-frontend-filter-form input[type="submit"].button:hover {
+    background-color: #000000;
+}
+
+.wcsl-filter-hr {
+
+    margin-bottom: 30px !important;
+}
+
+/* Section titles like "Client Summary" */
+.wcsl-report-container h3 {
+    font-size: 20px;
+    color: #ffffff;
+    margin-top: 30px;
+    margin-bottom: 15px;
+    padding-bottom: 5px;
+}
+
+
+/* Frontend Report Table */
+.wcsl-frontend-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-bottom: 30px;
+    font-size: 14px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.wcsl-frontend-table th,
+.wcsl-frontend-table td {
+    border-bottom: 1px solid #e9e9e9;
+    border-right: 1px solid #e9e9e9;
+    padding: 14px 18px;
+    text-align: left;
+    vertical-align: top;
+    color: #444;
+}
+
+.wcsl-frontend-table th:last-child,
+.wcsl-frontend-table td:last-child {
+    border-right: none;
+}
+
+.wcsl-frontend-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.wcsl-frontend-table thead th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    color: #333;
+    border-top: none;
+}
+
+.wcsl-frontend-table tbody tr:nth-child(even) {
+    background-color: #fdfdfd;
+}
+
+.wcsl-frontend-table tbody tr:hover {
+    background-color: #e6edf5;
+    /* Light blue tint for hover, related to new primary */
+}
+
+/* Frontend Print/Save PDF Button Actions */
+.wcsl-report-actions {
+    margin-top: 30px;
+    text-align: right;
+}
+
+.wcsl-report-actions .button.wcsl-print-button {
+    background-color: white; /* Example: White button with colored border */
+    border: 2px solid white;
+    color: #333; /* Text color matches border */
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 6px;
+    display: inline-block;
+    font-size: 15px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.wcsl-report-actions .button.wcsl-print-button:hover {
+    /* background-color: var(--wcsl-button-bg-hover, #2c4a6b); */
+    /* color: var(--wcsl-button-text, #fff); */
+    opacity: 0.9;
+}
+
+/* Paragraphs within the report container (e.g., "No client data...") */
+.wcsl-report-container p {
+    background-color: #ffffff;
+    padding: 8px 20px;
+    border-radius: 8px;
+    color: #555;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    margin-top: 10px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+
+/* Add to assets/css/frontend-style.css */
+
+/* ... (all your existing login, report container, filter form, table styles) ... */
+
+.wcsl-month-index-frontend-table {
+    /* Similar to .wcsl-frontend-table or slightly different if you prefer */
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-bottom: 30px;
+    font-size: 15px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.wcsl-month-index-frontend-table th,
+.wcsl-month-index-frontend-table td {
+    border-bottom: 1px solid #e9e9e9;
+    padding: 14px 18px;
+    text-align: left;
+    vertical-align: middle;
+    /* Align buttons nicely */
+    color: #444;
+}
+
+.wcsl-month-index-frontend-table th:last-child,
+/* Actions column */
+.wcsl-month-index-frontend-table td:last-child {
+    text-align: right;
+    /* Align buttons to the right */
+    border-right: none;
+}
+
+.wcsl-month-index-frontend-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.wcsl-month-index-frontend-table thead th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    color: #333;
+    border-top: none;
+}
+
+.wcsl-month-index-frontend-table tbody tr:hover {
+    background-color: #e6edf5;
+    /* Your theme hover color */
+}
+
+.wcsl-month-index-frontend-table .button {
+    margin-left: 8px;
+    padding: 6px 12px;
+    /* Smaller buttons for the index table */
+    font-size: 13px;
+}
+
+.wcsl-month-index-frontend-table .wcsl-view-details-button {
+    background-color: var(--wcsl-button-bg, #39618C);
+    color: var(--wcsl-button-text, #FFFFFF);
+}
+
+.wcsl-month-index-frontend-table .wcsl-view-details-button:hover {
+    background-color: #000000;
+}
+
+/* wcsl-print-button style is already defined for .wcsl-report-actions, 
+   but you can make it specific here if needed */
+
+.wcsl-back-to-index {
+    display: inline-block;
+    margin-bottom: 0px;
+    color: #000;
+    /* White text if on dark background */
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.wcsl-back-to-index:hover {
+    text-decoration: underline;
+}
+
+
+
+
+/* Add to assets/css/frontend-style.css */
+
+/* ... (all your existing styles) ... */
+
+/* --- Frontend Pagination Styles --- */
+.wcsl-pagination {
+    margin-top: 30px;
+    margin-bottom: 20px;
+    text-align: center;
+    /* Center the pagination links */
+    clear: both;
+}
+
+.wcsl-pagination .page-numbers {
+    display: inline-block;
+    padding: 8px 12px;
+    margin: 0 2px;
+    border: 1px solid #dcdcdc;
+    /* Matches select border */
+    border-radius: 4px;
+    text-decoration: none;
+    color: #39618C;
+    /* Your new primary color */
+    background-color: #fff;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+
+.wcsl-pagination .page-numbers.current {
+
+    background-color: var(--wcsl-pagination-active-bg, #39618C);
+    color: var(--wcsl-pagination-active-text, #FFFFFF);
+    border-color: var(--wcsl-pagination-active-bg, #39618C);
+}
+
+.wcsl-pagination .page-numbers:hover{
+
+    opacity: 0.9;
+
+}
+
+.wcsl-pagination .page-numbers.dots {
+    border: none;
+    background-color: transparent;
+    padding: 8px 4px;
+}
+
+
+
+/* Add to frontend-style.css */
+.wcsl-frontend-client-search-form {
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.wcsl-frontend-client-search-form input[type="search"] {
+    padding: 10px 12px;
+    border-radius: 6px;
+    border: 1px solid #dcdcdc;
+    font-size: 14px;
+    flex-grow: 1; /* Allow search input to take available space */
+}
+.wcsl-frontend-client-search-form .spinner {
+    display: inline-block; /* Initially hidden by JS, shown when loading */
+    width: 20px;           /* Adjust size as needed */
+    height: 20px;
+    border: 3px solid rgba(57, 97, 140, 0.2); /* Light version of your primary color #39618C */
+    border-radius: 50%;
+    border-top-color: #39618C; /* Your primary color */
+    animation: wcslSpinner 0.8s ease-in-out infinite;
+    -webkit-animation: wcslSpinner 0.8s ease-in-out infinite;
+    margin-left: 10px;
+    vertical-align: middle;
+    float: none; /* Ensure it doesn't float if previously set */
+}
+
+@keyframes wcslSpinner {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@-webkit-keyframes wcslSpinner {
+    to {
+        -webkit-transform: rotate(360deg);
+    }
+}
+#wcsl_client_summary_ajax_container .wcsl-loading-message,
+#wcsl_client_summary_ajax_container .wcsl-error-message {
+    text-align: center;
+    padding: 20px;
+    background-color: #fff; /* So it's visible on colored bg */
+    border-radius: 8px;
+    color: #555;
+}
+#wcsl_client_summary_ajax_container .wcsl-error-message {
+    color: #c00;
+    border: 1px solid #f5c6cb;
+}
+
+
+/* --- Responsive Adjustments for Filter Form --- */
+@media (max-width: 768px) {
+
+    /* Adjust breakpoint as needed */
+    .wcsl-frontend-filter-form {
+        flex-direction: column;
+        /* Stack elements vertically */
+        align-items: stretch;
+        /* Make elements full width */
+    }
+
+    .wcsl-filter-group {
+        flex-direction: column;
+        /* Stack label and select */
+        align-items: stretch;
+        width: 100%;
+        /* Make group take full width */
+    }
+
+    .wcsl-frontend-filter-form label {
+        margin-bottom: 5px;
+        /* Add some space below label when stacked */
+    }
+
+    .wcsl-frontend-filter-form select {
+        width: 100%;
+        /* Selects take full width */
+        min-width: 0;
+        /* Reset min-width */
+    }
+
+    .wcsl-frontend-filter-form input[type="submit"].button {
+        width: 100%;
+        /* Button takes full width */
+        margin-left: 0;
+        /* Reset margin-left */
+        margin-top: 10px;
+        /* Add some space above button when stacked */
+    }
+}
+
+@media (max-width: 480px) {
+
+    /* Further adjustments for very small screens */
+    .wcsl-login-form-container {
+        margin: 30px 15px;
+        padding: 25px;
+    }
+
+    .wcsl-report-container {
+        margin: 20px 0;
+        padding: 20px;
+        border-radius: 10px;
+    }
+
+    .wcsl-frontend-filter-form {
+        padding: 15px;
+    }
+
+    .wcsl-report-container h2 {
+        font-size: 22px;
+    }
+
+
+    .wcsl-frontend-table {
+        font-size: 13px;
+    }
+
+    .wcsl-frontend-table th,
+    .wcsl-frontend-table td {
+        padding: 10px 12px;
+    }
+
+    .wcsl-report-actions .button.wcsl-print-button {
+        width: 100%;
+        text-align: center;
+    }
+}
