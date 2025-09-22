@@ -1,0 +1,1432 @@
+/*
+ * WCSL Portal Stylesheet - v2.1 Jobi Redesign (Merged)
+ */
+
+/* ===================================================================
+   1. Design System (Variables)
+   =================================================================== */
+
+:root {
+    /* These are now just fallbacks. The live colors are injected by PHP. */
+    --wcsl-primary-color: #3E624D;
+    --wcsl-accent-color: #D4F838;
+    --wcsl-bg-color-main: #CCD8D6;
+    --wcsl-bg-color-content: #F0F5F3;
+
+    /* Static variables */
+    --wcsl-text-color-primary: #181A16;
+    --wcsl-text-color-secondary: #6B6D69;
+    --wcsl-bg-color-card: #FFFFFF;
+    --wcsl-border-color: #E6E8E4;
+    --wcsl-highlight-yellow: #fffbe4;
+    --spacing-xsmall: 4px;
+    --spacing-small: 8px;
+    --spacing-medium: 16px;
+    --spacing-large: 24px;
+    --spacing-xlarge: 32px;
+    --spacing-xxlarge: 48px;
+    --font-weight-regular: 400;
+    --font-weight-medium: 500;
+    --font-weight-bold: 700;
+    --font-size-small: 12px;
+    --font-size-base: 14px;
+    --font-size-medium: 16px;
+    --font-size-large: 20px;
+    --font-size-xlarge: 22px;
+    --card-border-radius: 16px;
+}
+
+.wcsl-panel-notice {
+
+    padding: 30px;
+    text-align: center;
+}
+
+.wcsl-portal-main select option:disabled {
+    color: #999999;
+    background-color: #f5f5f5;
+}
+
+
+/* ===================================================================
+   2. Base & Reset Styles (Theme Agnostic)
+   =================================================================== */
+
+/* --- Links --- */
+#wcsl-portal-app-wrapper a,
+#wcsl-portal-app-wrapper a:visited {
+    text-decoration: none;
+    /* Remove underline from all links */
+    box-shadow: none;
+    /* Remove theme-added focus shadows */
+    border: none;
+    /* Remove theme-added focus borders */
+}
+
+#wcsl-portal-app-wrapper a:hover {
+    text-decoration: none;
+    /* Ensure no underline appears on hover */
+}
+
+/* --- Buttons & Inputs --- */
+#wcsl-portal-app-wrapper button,
+#wcsl-portal-app-wrapper input[type="submit"],
+#wcsl-portal-app-wrapper input[type="search"],
+#wcsl-portal-app-wrapper input[type="date"],
+#wcsl-portal-app-wrapper select {
+    outline: none !important;
+    /* Force remove the browser/theme default focus outline */
+    box-shadow: none !important;
+    /* Force remove any theme focus shadows */
+}
+
+/* We will add our own, consistent focus styles later if needed */
+
+/* ===================================================================
+   2. Full-Width Layout & Main Structure
+   =================================================================== */
+
+/* This targets the theme's main content wrapper to force it full-width */
+.wcsl-portal-wrapper {
+    max-width: 100% !important;
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+#wcsl-portal-app-wrapper {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: var(--wcsl-text-color-primary);
+    display: flex;
+    min-height: 100vh;
+    background-color: var(--wcsl-bg-color-main, #CCD8D6);
+    /* Use dynamic variable with fallback */
+    padding: 30px;
+}
+
+/* This removes any h1, h2, etc. styles coming from the theme */
+#wcsl-portal-app-wrapper h1,
+#wcsl-portal-app-wrapper h2,
+#wcsl-portal-app-wrapper h3,
+#wcsl-portal-app-wrapper h4 {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: var(--wcsl-text-color-primary);
+}
+
+.wcsl-portal-sidebar {
+    width: 280px;
+    flex-shrink: 0;
+    background-color: var(--wcsl-bg-color-card);
+    padding: var(--spacing-large);
+    border-top-left-radius: 30px;
+    border-bottom-left-radius: 30px;
+    padding-right: 50px;
+}
+
+.wcsl-portal-main {
+    flex-grow: 1;
+    padding: var(--spacing-large) var(--spacing-xxlarge);
+    background-color: var(--wcsl-bg-color-content, var(--wcsl-bg-color-main));
+    /* Use dynamic variable */
+    border-radius: 30px;
+    margin-left: -25px;
+}
+
+.wcsl-portal-header {
+    display: none;
+}
+
+
+/* ===================================================================
+   3. Sidebar Styles
+   =================================================================== */
+
+.wcsl-sidebar-widget h4 {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
+    color: var(--wcsl-text-color-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 0 0 var(--spacing-large) 0;
+}
+
+.wcsl-sidebar-widget ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.wcsl-sidebar-widget ul li a {
+    display: flex;
+    align-items: center;
+    padding: var(--spacing-medium);
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: var(--font-weight-medium);
+    color: var(--wcsl-text-color-secondary);
+    transition: background-color 0.2s ease, color 0.2s ease;
+    gap: 10px;
+}
+
+/* New Icon Styles */
+.wcsl-menu-icon {
+    width: 24px;
+    opacity: 1;
+    transition: filter 0.2s ease;
+}
+
+.wcsl-sidebar-widget ul li a:hover {
+    background-color: var(--wcsl-bg-color-content);
+    color: var(--wcsl-text-color-primary);
+}
+
+.wcsl-sidebar-widget ul li.active a {
+    background-color: var(--wcsl-dynamic-primary-color, var(--wcsl-primary-color)) !important;
+    color: #FFFFFF;
+}
+
+
+/* FIX: This is the magic part that makes the icon white on active state */
+.wcsl-sidebar-widget ul li.active a .wcsl-menu-icon {
+    filter: brightness(0) invert(1);
+    opacity: 1;
+}
+
+.wcsl-notification-badge {
+    margin-left: auto;
+    background-color: var(--wcsl-dynamic-accent-color, var(--wcsl-accent-color));
+    color: white;
+    padding: 2px 6px;
+    font-size: 11px;
+    font-weight: var(--font-weight-bold);
+    border-radius: 100%;
+}
+
+.metric-icon {
+    background-color: var(--wcsl-dynamic-accent-color, var(--wcsl-accent-color));
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+/* ===================================================================
+   4. Main Content, Cards & Tables
+   =================================================================== */
+.wcsl-page-title {
+    font-size: 24px !important;
+    font-weight: var(--font-weight-bold);
+    margin: 0 0 var(--spacing-xlarge) 0;
+    margin-bottom: 0px !important;
+}
+
+.wcsl-card {
+    background-color: var(--wcsl-bg-color-card);
+    border-radius: var(--card-border-radius);
+    padding: var(--spacing-large);
+    box-shadow: none;
+    /* Removed shadow */
+    border: none;
+    /* Removed border */
+    margin-bottom: var(--spacing-large);
+}
+
+.wcsl-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-large);
+}
+
+.wcsl-card-title {
+    font-size: 20px !important;
+    font-weight: var(--font-weight-medium);
+    margin: 0;
+}
+
+.wcsl-portal-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: transparent;
+    border-radius: 0;
+    box-shadow: none;
+    overflow: visible;
+    border: none;
+}
+
+.wcsl-portal-table th,
+.wcsl-portal-table td {
+    padding: var(--spacing-medium);
+    text-align: left;
+    border-bottom: 1px solid var(--wcsl-border-color);
+}
+
+.wcsl-portal-table thead th {
+    font-weight: var(--font-weight-medium);
+    color: var(--wcsl-text-color-secondary);
+    background-color: transparent;
+}
+
+.wcsl-portal-table tr:last-child td {
+    border-bottom: 1px solid var(--wcsl-border-color);
+}
+
+/* --- FIX: Styles for unread notifications and fixing tasks --- */
+.wcsl-portal-table tr.unread,
+.wcsl-portal-table tr.type-fixing {
+    background-color: var(--wcsl-highlight-yellow);
+}
+
+.wcsl-portal-table tr.unread td {
+    font-weight: var(--font-weight-bold);
+}
+
+.wcsl-portal-table td.billable {
+    font-weight: var(--font-weight-bold);
+    color: #d9534f;
+}
+
+/* ===================================================================
+   5. Dashboard Component Styles
+   =================================================================== */
+.wcsl-metric-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: var(--spacing-large);
+}
+
+.wcsl-metric-card {
+    padding: 30px 20px;
+    display: flex;
+    /* <-- Use Flexbox for alignment */
+    justify-content: space-between;
+    /* <-- Pushes items to each end */
+    align-items: center;
+    /* <-- Vertically centers items */
+}
+
+.wcsl-metric-card h4 {
+    margin: 0 0 var(--spacing-small) 0;
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
+    color: var(--wcsl-text-color-secondary);
+}
+
+.wcsl-metric-card .metric-value {
+    font-size: var(--font-size-xlarge);
+    font-weight: var(--font-weight-medium);
+    color: var(--wcsl-text-color-primary);
+    line-height: 1.1;
+    margin-bottom: 0px !important;
+}
+
+.metric-icon {
+    background-color: var(--wcsl-dynamic-accent-color, var(--wcsl-accent-color));
+    border-radius: 50%;
+    /* Makes it a circle */
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    /* Prevents icon from shrinking */
+}
+
+.metric-icon img {
+    width: 35px;
+    height: 35px;
+    filter: var(--wcsl-metric-icon-filter, none); /* Use dynamic variable */
+}
+
+.wcsl-dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: var(--spacing-large);
+}
+
+.wcsl-dashboard-watchlist-table {
+    width: 100%;
+}
+
+.wcsl-dashboard-watchlist-table th,
+.wcsl-dashboard-watchlist-table td {
+    padding: var(--spacing-medium);
+    text-align: left;
+}
+
+.wcsl-dashboard-watchlist-table thead th {
+    font-weight: var(--font-weight-medium);
+    color: var(--wcsl-text-color-secondary);
+}
+
+.wcsl-dashboard-watchlist-table tbody tr:last-child td {
+    border-bottom: 1px solid var(--wcsl-border-color);
+}
+
+.wcsl-progress-wrapper {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-small);
+}
+
+.wcsl-client-info {
+    font-weight: var(--font-weight-medium);
+}
+
+.wcsl-client-usage {
+    font-size: var(--font-size-small);
+    color: var(--wcsl-text-color-secondary);
+}
+
+.wcsl-progress-bar-container {
+    width: 100%;
+    height: 6px;
+    background-color: #e9ecef;
+    border-radius: 3px;
+    margin-top: var(--spacing-small);
+}
+
+.wcsl-progress-bar {
+    height: 100%;
+    background-color: green;
+    border-radius: 3px;
+}
+
+.wcsl-progress-bar.danger {
+    background-color: #d9534f;
+}
+
+.wcsl-recent-activity-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.wcsl-recent-activity-list li {
+    padding: var(--spacing-medium) 0;
+    border-bottom: 1px solid var(--wcsl-border-color);
+}
+
+.wcsl-recent-activity-list li:last-child {
+    border-bottom: 1px solid var(--wcsl-border-color);
+    ;
+}
+
+.wcsl-recent-activity-list .activity-title {
+    font-weight: var(--font-weight-medium);
+}
+
+.wcsl-recent-activity-list .activity-time {
+    display: block;
+    font-size: var(--font-size-small);
+    color: var(--wcsl-text-color-secondary);
+    margin-top: var(--spacing-xsmall);
+}
+
+.wcsl-archive-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.wcsl-archive-table th,
+.wcsl-archive-table td {
+    padding: var(--spacing-medium);
+    text-align: left;
+    border-bottom: 1px solid var(--wcsl-border-color);
+}
+
+.wcsl-archive-table th {
+    font-weight: var(--font-weight-medium);
+    color: var(--wcsl-text-color-secondary);
+}
+
+.wcsl-archive-table td:last-child {
+    text-align: right;
+}
+
+.wcsl-archive-table td .wcsl-portal-button {
+    margin-left: 5px;
+}
+
+/* Space between buttons */
+/* Other components (buttons, forms, etc.) can be added here */
+.wcsl-portal-button {
+    background-color: var(--wcsl-dynamic-primary-color, var(--wcsl-primary-color));
+    color: #fff;
+    padding: var(--spacing-small) var(--spacing-medium);
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+
+.wcsl-portal-button:hover {
+    opacity: 0.9;
+    color: #fff;
+}
+
+/* ===================================================================
+   NEW: Main Content Header Bar Styles
+   =================================================================== */
+
+
+.wcsl-main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-xlarge);
+    padding-bottom: var(--spacing-large);
+}
+
+.wcsl-page-title {
+    margin: 0;
+    /* Remove bottom margin since it's now in the header */
+}
+
+.wcsl-header-profile-area {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-medium);
+}
+
+.wcsl-profile-image {
+    cursor: pointer;
+}
+
+.wcsl-avatar-img {
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: block;
+}
+
+.wcsl-logout-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    transition: background-color 0.2s ease;
+    background-color: var(--wcsl-dynamic-primary-color, var(--wcsl-primary-color));
+    /* <-- FIX: Set background color */
+    border: none;
+    /* <-- FIX: Removed border for a cleaner look */
+}
+
+.wcsl-logout-icon:hover {
+    opacity: 0.8;
+}
+
+.wcsl-logout-icon img {
+    width: 17px;
+    height: 17px;
+    filter: brightness(0) invert(1);
+    /* <-- FIX: This CSS trick makes any PNG icon white */
+}
+
+
+
+/* ===================================================================
+   7. NEW: Data Table Component Styles
+   =================================================================== */
+
+.wcsl-data-table-wrapper {
+    background-color: var(--wcsl-bg-color-card);
+    border-radius: 15px;
+    /* Your requested radius */
+    margin-bottom: var(--spacing-xlarge);
+    overflow: hidden;
+    /* Ensures child elements respect the border-radius */
+}
+
+.wcsl-data-table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    /* Allows controls to wrap on smaller screens */
+    gap: var(--spacing-medium);
+    padding: var(--spacing-medium) var(--spacing-large);
+    border-bottom: 1px solid var(--wcsl-border-color);
+}
+
+.wcsl-data-table-title {
+    font-size: var(--font-size-medium);
+    font-weight: var(--font-weight-medium);
+    margin: 0;
+}
+
+.wcsl-data-table-controls {
+    display: flex;
+    flex-wrap: np;
+    align-items: center;
+    gap: var(--spacing-small);
+}
+
+.wcsl-data-table-controls input[type="search"],
+.wcsl-data-table-controls select {
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--wcsl-border-color);
+    font-size: var(--font-size-base);
+}
+
+/* Override portal button for a smaller version in controls */
+.wcsl-data-table-controls .wcsl-portal-button,
+.wcsl-data-table-controls .wcsl-portal-button-clear {
+    padding: 8px 12px;
+    font-size: 13px;
+}
+
+/* Specific styling for the table itself */
+.wcsl-portal-table {
+    border-radius: 0;
+    /* Remove old radius */
+    box-shadow: none;
+    /* Remove old shadow */
+    margin-bottom: 0;
+    /* Remove old margin */
+}
+
+.wcsl-portal-table th,
+.wcsl-portal-table td {
+    border-right: none;
+    /* Remove vertical borders */
+    border-left: none;
+    padding-left: var(--spacing-large);
+    padding-right: var(--spacing-large);
+}
+
+.wcsl-portal-table thead th {
+    background-color: var(--wcsl-dynamic-primary-color, var(--wcsl-primary-color));
+    /* Dark Green */
+    color: #FFFFFF;
+    border-bottom: none;
+}
+
+.wcsl-portal-table tbody tr:last-child td {
+    border-bottom: none;
+    /* Ensure last row has no bottom border */
+}
+
+/* Table Footer Styling */
+.wcsl-data-table-footer {
+    padding: var(--spacing-medium) var(--spacing-large);
+    background-color: #F8F9FA;
+    /* Light gray to separate it */
+}
+
+.wcsl-pagination.wcsl-ajax-pagination {
+    padding: 20px;
+    margin-top: 30px;
+    text-align: end;
+    border-top: 1px solid #E6E8E4;
+
+}
+
+
+
+/* ===================================================================
+   8. NEW: Header Buttons & Pagination Styles
+   =================================================================== */
+
+.wcsl-main-header .wcsl-page-title {
+    margin: 0;
+    flex-grow: 1;
+    /* Allows title to take up space */
+}
+
+.wcsl-main-header .wcsl-back-link {
+    margin-right: var(--spacing-medium);
+    white-space: nowrap;
+    color: var(--wcsl-text-color-secondary);
+    text-decoration: none;
+    font-size: var(--font-size-base);
+}
+
+.wcsl-main-header .wcsl-back-link:hover {
+    text-decoration: underline;
+}
+
+.wcsl-main-header .wcsl-portal-button {
+    white-space: nowrap;
+    margin-left: var(--spacing-medium);
+}
+
+/* Pagination Styles */
+.wcsl-pagination {
+    margin: 0;
+}
+
+.wcsl-pagination .page-numbers {
+    display: inline-block;
+    padding: 8px 12px;
+    margin: 0 2px;
+    border: 1px solid var(--wcsl-border-color);
+    border-radius: 4px;
+    text-decoration: none;
+    color: var(--wcsl-text-color-secondary);
+    background-color: #FFFFFF;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    font-weight: var(--font-weight-medium);
+    font-size: 13px;
+}
+
+.wcsl-pagination .page-numbers.current {
+    background-color: var(--wcsl-dynamic-primary-color, var(--wcsl-primary-color));
+    color: #FFFFFF;
+    border-color: var(--wcsl-dynamic-primary-color, var(--wcsl-primary-color));
+}
+
+.wcsl-pagination a.page-numbers:hover {
+    background-color: var(--wcsl-primary-color-light);
+    border-color: #c9d2ce;
+}
+
+.wcsl-pagination .page-numbers.dots {
+    border: none;
+    background-color: transparent;
+}
+
+/* Header for Month Details Page */
+.wcsl-main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-xlarge);
+}
+
+.wcsl-main-header .wcsl-header-left {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-medium);
+}
+
+.wcsl-main-header .wcsl-page-title {
+    margin: 0;
+}
+
+
+/* Styling for the new header structure on Month Details page */
+.wcsl-page-header-wrapper {
+    margin-bottom: var(--spacing-xlarge);
+}
+
+.wcsl-page-header-wrapper .wcsl-back-link {
+    margin-bottom: var(--spacing-small);
+    display: inline-block;
+    /* Needed to apply margin-bottom */
+    font-size: var(--font-size-base);
+    color: var(--wcsl-text-color-secondary);
+    text-decoration: none;
+}
+
+.wcsl-page-header-wrapper .wcsl-back-link:hover {
+    text-decoration: underline;
+}
+
+.wcsl-main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.wcsl-main-header .wcsl-page-title {
+    margin: 0;
+}
+
+
+/* ===================================================================
+   9. CORRECTED: Form Controls & Filter Bar Styles
+   =================================================================== */
+
+/* This targets the div that WRAPS all the filter/search controls */
+.wcsl-data-table-controls {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: var(--spacing-medium);
+}
+
+/* This specifically targets a form when it's inside the controls area */
+.wcsl-data-table-controls form {
+    display: contents;
+    /* This makes the form "invisible" to the flex layout */
+}
+
+/* Styling for select dropdowns */
+.wcsl-data-table-controls select {
+    padding: 10px 12px;
+    /* Increased padding */
+    border-radius: 8px;
+    border: 1px solid var(--wcsl-border-color);
+    background-color: #FFF;
+    font-size: var(--font-size-base);
+    min-width: 22%;
+    height: 41px;
+    /* Match search input height */
+}
+
+/* A wrapper to group the search input and button together */
+.wcsl-search-group {
+    display: flex;
+    align-items: center;
+}
+
+.wcsl-data-table-controls input[type="search"] {
+    padding: 10px 12px;
+    /* Increased padding */
+    border: 1px solid var(--wcsl-border-color);
+    font-size: var(--font-size-base);
+    border-radius: 8px 0 0 8px;
+    min-width: 200px;
+    margin-right: -1px;
+}
+
+/* FIX: More specific selector to override theme button colors */
+.wcsl-data-table-controls .wcsl-portal-button,
+#wcsl-portal-app-wrapper input[type="submit"].wcsl-portal-button {
+    background-color: var(--wcsl-dynamic-primary-color, var(--wcsl-primary-color)) !important;
+    /* Force our brand color */
+    color: #FFFFFF !important;
+    border: none !important;
+    padding: 13px 16px;
+    /* Increased padding */
+}
+
+/* Make sure the button next to a search input has the flat left corner */
+.wcsl-search-group .wcsl-portal-button {
+    border-radius: 0 8px 8px 0;
+}
+
+
+/* ===================================================================
+   10. NEW: Add/Edit Task Form Styles
+   =================================================================== */
+
+/* Main wrapper for the form pages */
+.wcsl-add-task-wrap,
+.wcsl-edit-task-wrap {
+    /* Uses the .wcsl-card styles for the main container */
+    background-color: var(--wcsl-bg-color-card);
+    border-radius: 15px;
+    padding: var(--spacing-large);
+}
+
+.wcsl-add-task-wrap h3,
+.wcsl-edit-task-wrap h3 {
+    margin-top: 0;
+    margin-bottom: var(--spacing-large);
+    font-size: var(--font-size-large);
+}
+
+/* The form table itself */
+#wcsl-frontend-add-task-form .form-table,
+#wcsl-frontend-edit-task-form .form-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+#wcsl-frontend-add-task-form .form-table th,
+#wcsl-frontend-add-task-form .form-table td,
+#wcsl-frontend-edit-task-form .form-table th,
+#wcsl-frontend-edit-task-form .form-table td {
+    padding: var(--spacing-medium);
+    border-bottom: 1px solid var(--wcsl-border-color);
+    text-align: left;
+    vertical-align: top;
+}
+
+#wcsl-frontend-add-task-form .form-table th {
+    width: 25%;
+    /* Give labels a consistent width */
+    font-weight: var(--font-weight-medium);
+}
+
+#wcsl-frontend-edit-task-form .form-table th {
+    width: 25%;
+    font-weight: var(--font-weight-medium);
+}
+
+
+/* Styling for all input fields */
+.wcsl-portal-main input[type="text"],
+.wcsl-portal-main input[type="date"],
+.wcsl-portal-main input[type="url"],
+.wcsl-portal-main select,
+.wcsl-portal-main textarea {
+    width: 100%;
+    max-width: 450px;
+    /* Limit width for better readability */
+    padding: 8px 12px;
+    border: 1px solid var(--wcsl-border-color);
+    border-radius: 8px;
+    font-size: var(--font-size-base);
+    background-color: #F9FAFC;
+    /* Slightly off-white background for inputs */
+}
+
+/* Red asterisk for required fields */
+.wcsl-portal-main .form-table th .required {
+    color: #d9534f;
+    margin-left: 2px;
+}
+
+/* Media uploader buttons */
+#wcsl_upload_attachment_button,
+#wcsl_remove_attachment_button {
+    background-color: #6c757d;
+    /* Secondary gray color */
+    color: #fff;
+    padding: 8px 12px;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+}
+
+#wcsl_upload_attachment_button:hover,
+#wcsl_remove_attachment_button:hover {
+    opacity: 0.9;
+}
+
+/* Submit button */
+.wcsl-portal-main .submit {
+    margin-top: var(--spacing-large);
+    padding-top: var(--spacing-large);
+    border-top: 1px solid var(--wcsl-border-color);
+    text-align: right;
+}
+
+
+/* ===================================================================
+   11. NEW: Reports Page Layout & Filter Styles
+   =================================================================== */
+
+/* Filter Bar Styles */
+.wcsl-reports-filter-form .wcsl-form-controls-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing-medium);
+}
+
+.wcsl-reports-filter-form label {
+    font-weight: var(--font-weight-medium);
+    color: var(--wcsl-text-color-secondary);
+}
+
+.wcsl-reports-filter-form input[type="date"] {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--wcsl-border-color);
+    background-color: var(--wcsl-bg-color-main);
+    font-size: var(--font-size-base);
+}
+
+/* Grid layout for the top 4 reports */
+.wcsl-reports-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-large);
+    margin-top: var(--spacing-large);
+}
+
+/* Container for the full-width reports */
+.wcsl-reports-grid-full-width {
+    margin-top: var(--spacing-large);
+}
+
+.wcsl-reports-wrap .wcsl-form-controls-wrapper input {
+
+    max-width: 35%;
+}
+
+/* Individual report block styling */
+.wcsl-report-block {
+    padding: 0;
+    /* Override default card padding */
+}
+
+.wcsl-report-block .wcsl-card-title {
+    padding: var(--spacing-medium) var(--spacing-large);
+    border-bottom: 1px solid var(--wcsl-border-color);
+}
+
+.wcsl-chart-container {
+    padding: var(--spacing-large);
+    height: 300px;
+    position: relative;
+    min-height: 250px;
+}
+
+.wcsl-data-metric-container {
+    padding: var(--spacing-large);
+    height: 100%;
+    min-height: 250px;
+}
+
+.wcsl-data-metric-container .metric-value {
+    font-size: 36px;
+    font-weight: 700;
+}
+
+/* Tabs for Task Analysis */
+.wcsl-report-header-with-tabs {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 var(--spacing-large);
+    border-bottom: 1px solid var(--wcsl-border-color);
+}
+
+.wcsl-report-header-with-tabs .wcsl-card-title {
+    padding: var(--spacing-medium) 0;
+    border-bottom: none;
+}
+
+.wcsl-tabs-nav {
+    display: flex;
+}
+
+.wcsl-tab-link {
+    background-color: transparent;
+    border: none;
+    padding: var(--spacing-medium);
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--wcsl-text-color-secondary);
+    border-bottom: 2px solid transparent;
+}
+
+.wcsl-tab-link.active {
+    color: var(--wcsl-dynamic-primary-color, var(--wcsl-primary-color));
+    border-bottom-color: var(--wcsl-dynamic-primary-color, var(--wcsl-primary-color));
+}
+
+/* Responsive grid for reports */
+@media (max-width: 960px) {
+    .wcsl-reports-grid {
+        grid-template-columns: 1fr;
+        /* Stack to a single column on smaller screens */
+    }
+}
+
+
+/* ===================================================================
+   12. NEW: Report Tabs & Media Library Fixes
+   =================================================================== */
+
+/* --- Report Tab Styles --- */
+
+/* Tabs for Task Analysis */
+.wcsl-report-header-with-tabs {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 var(--spacing-large);
+    border-bottom: 1px solid var(--wcsl-border-color);
+}
+
+.wcsl-report-header-with-tabs .wcsl-card-title {
+    padding: var(--spacing-medium) 0;
+    border-bottom: none;
+}
+
+.wcsl-tabs-nav {
+    display: flex;
+}
+
+/* This targets the buttons specifically within the tabs navigation */
+.wcsl-tabs-nav .wcsl-tab-link {
+    background: transparent !important;
+    /* Override button styles */
+    border: none !important;
+    /* Override button styles */
+    padding: var(--spacing-medium) var(--spacing-small);
+    cursor: pointer;
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
+    color: var(--wcsl-text-color-secondary);
+    border-bottom: 3px solid transparent;
+    border-radius: 0;
+    /* Remove button radius */
+    margin: 0 var(--spacing-small);
+    transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.wcsl-tabs-nav .wcsl-tab-link:hover {
+    color: var(--wcsl-text-color-primary);
+}
+
+.wcsl-tabs-nav .wcsl-tab-link.active {
+    color: white;
+    border-bottom-color: var(--wcsl-dynamic-primary-color, var(--wcsl-primary-color));
+    background-color: var(--wcsl-dynamic-primary-color, var(--wcsl-primary-color)) !important;
+    ;
+    padding: 12px 20px;
+}
+
+/* --- WordPress Media Library Text Color Fix --- */
+#menu-item-upload,
+#menu-item-browse {
+
+    color: black !important;
+}
+
+
+/* ===================================================================
+   13. NEW: Notifications Page Styles
+   =================================================================== */
+
+/* Add padding to the bulk action header */
+#wcsl-employee-notifications-form .wcsl-portal-section:first-child {
+    padding: var(--spacing-medium) var(--spacing-large);
+    border-bottom: 1px solid var(--wcsl-border-color);
+    box-shadow: none;
+    border-radius: 0;
+}
+
+/* Style the bulk actions bar like our other control headers */
+.wcsl-notifications-wrap .wcsl-bulk-actions-wrapper {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-medium);
+}
+
+.wcsl-notifications-wrap .wcsl-bulk-actions-wrapper select {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--wcsl-border-color);
+    background-color: #FFF;
+    font-size: var(--font-size-base);
+}
+
+.wcsl-notifications-wrap .wcsl-bulk-actions-wrapper .wcsl-portal-button {
+    padding: 8px 12px;
+    font-size: 13px;
+}
+
+/* Target the notification table specifically */
+#wcsl-employee-notifications-table thead th {
+    background-color: var(--wcsl-dynamic-primary-color, var(--wcsl-primary-color));
+    color: #FFFFFF;
+}
+
+#wcsl-employee-notifications-table .check-column {
+    width: 40px;
+    padding-left: var(--spacing-large);
+    background-color: white !important;
+
+}
+
+
+
+#wcsl-employee-notifications-table .notification-actions {
+    text-align: right;
+    white-space: nowrap;
+}
+
+#wcsl-employee-notifications-table .notification-actions a {
+    color: var(--wcsl-dynamic-primary-color, var(--wcsl-primary-color));
+    font-weight: var(--font-weight-medium);
+}
+
+#wcsl-employee-notifications-table .notification-actions a.delete {
+    color: #d9534f;
+}
+
+
+/* ===================================================================
+   14. NEW: Status Text Color Styles
+   =================================================================== */
+
+.wcsl-status-badge {
+    /* Base styles for all status texts */
+    background-color: transparent !important;
+    padding: 0 !important;
+    font-weight: var(--font-weight-bold);
+    text-transform: capitalize;
+    font-size: var(--font-size-base);
+    border-radius: 0;
+    letter-spacing: 0;
+}
+
+/* Specific colors for each status */
+.wcsl-status-badge.status-completed {
+    color: #5cb85c !important;
+    /* Green */
+}
+
+.wcsl-status-badge.status-in-progress {
+    color: #0275d8 !important;
+    /* Blue */
+}
+
+.wcsl-status-badge.status-in-review {
+    color: #f0ad4e !important;
+    /* Orange */
+}
+
+.wcsl-status-badge.status-pending {
+    color: #d9534f !important;
+    /* Red */
+}
+
+.wcsl-status-badge.status-billed {
+    color: #292b2c !important;
+    /* Dark Grey / Black */
+}
+
+/* Fallback for any other or unknown status */
+.wcsl-status-badge.status-unknown {
+    color: #6c757d !important;
+    /* Neutral Grey */
+}
+
+
+/* ===================================================================
+   15. NEW: Table Action Link Colors
+   =================================================================== */
+
+/* Target all general links inside any portal table cell */
+.wcsl-portal-table td a {
+    color: var(--wcsl-dynamic-primary-color, var(--wcsl-primary-color));
+    /* Use our primary dark green */
+    font-weight: var(--font-weight-medium);
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+}
+
+.wcsl-portal-table td a:hover {
+    opacity: 0.8;
+    text-decoration: underline;
+}
+
+/* Specifically target the 'delete' link to make it red */
+.wcsl-portal-table td a.delete {
+    color: #d9534f;
+    /* A standard danger red */
+}
+
+/* Style for the divider between links, like in "Edit | Delete" */
+.wcsl-portal-table td .action-divider {
+    color: var(--wcsl-border-color);
+    /* Use a light gray for the divider */
+    margin: 0 5px;
+}
+
+
+/* ===================================================================
+   NEW: Modern Login Page Styles
+   =================================================================== */
+
+.wcsl-portal-wrapper {
+    /* Ensure the wrapper has no padding when the login page is shown */
+    padding: 0 !important;
+}
+
+.wcsl-login-page-wrapper {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    /* Background color is set inline from PHP */
+}
+
+.wcsl-login-form-container {
+    background-color: #FFFFFF;
+    border-radius: 12px;
+    padding: 60px 40px 40px 40px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    position: relative;
+    text-align: center;
+}
+
+.wcsl-login-icon-wrapper {
+    position: absolute;
+    top: -40px; /* Pulls it halfway outside the top */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: var(--wcsl-dynamic-primary-color, var(--wcsl-primary-color));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+}
+
+.wcsl-login-icon-wrapper img {
+    width: 40px;
+    height: 40px;
+    filter: brightness(0) invert(1); /* Makes icon white */
+}
+
+.wcsl-login-input-group {
+    position: relative;
+    margin-bottom: var(--spacing-medium);
+}
+
+.wcsl-login-input-group .input-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    opacity: 0.4;
+}
+
+.wcsl-login-form-container input[type="text"],
+.wcsl-login-form-container input[type="password"] {
+    width: 100%;
+    padding: 12px 15px 12px 45px; /* Add padding-left for the icon */
+    border: 1px solid #EAEAEA;
+    background-color: #F7F7F7;
+    border-radius: 8px;
+    font-size: 15px;
+}
+
+.wcsl-login-button {
+    background-color: var(--wcsl-dynamic-primary-color, var(--wcsl-primary-color));
+    color: #FFFFFF;
+    border: none !important;
+    padding: 12px 20px !important;
+    font-size: 16px !important;
+    width: 100%;
+    border-radius: 8px !important;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: opacity 0.2s ease;
+}
+
+.wcsl-login-button:hover {
+    opacity: 0.9;
+}
+
+.wcsl-lost-password {
+    text-align: center;
+    margin-top: var(--spacing-large);
+    font-size: 14px;
+}
+
+.wcsl-lost-password a {
+    color: #333;
+}
+
+
+/* ===================================================================
+   17. NEW: AJAX Loader Styles
+   =================================================================== */
+
+/* --- Global Full-Page Loader --- */
+.wcsl-global-loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(240, 245, 243, 0.7); /* Use your --wcsl-bg-color-content with opacity */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 99999;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.wcsl-global-loader.is-active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.wcsl-global-loader .wcsl-spinner {
+    border: 5px solid rgba(0, 0, 0, 0.1);
+    border-top-color: var(--wcsl-primary-color); /* DYNAMIC PRIMARY COLOR! */
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: wcsl-spin 1s linear infinite;
+}
+
+/* --- Partial Table/Content Loader --- */
+.wcsl-ajax-container.wcsl-loading {
+    position: relative; /* This is the key part */
+    min-height: 150px; /* Prevent container collapse */
+}
+
+.wcsl-ajax-container.wcsl-loading::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.8); /* Use your --wcsl-bg-color-card with opacity */
+    z-index: 998;
+    border-radius: 15px; /* Match your card radius */
+}
+
+.wcsl-ajax-container.wcsl-loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 40px;
+    height: 40px;
+    margin-top: -20px;
+    margin-left: -20px;
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-top-color: var(--wcsl-primary-color); /* DYNAMIC PRIMARY COLOR! */
+    border-radius: 50%;
+    z-index: 999;
+    animation: wcsl-spin 1s linear infinite;
+}
+
+/* --- Spinner Animation --- */
+@keyframes wcsl-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ===================================================================
+   18. Responsive Styles
+   =================================================================== */
+
+@media (max-width: 960px) {
+    #wcsl-portal-app-wrapper {
+        flex-direction: column;
+    }
+
+    .wcsl-portal-sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid var(--wcsl-border-color);
+    }
+
+    .wcsl-portal-main {
+        padding: var(--spacing-large);
+    }
+}

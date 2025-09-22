@@ -117,20 +117,35 @@ function wcsl_get_total_billable_minutes_for_period( $start_date, $end_date ) {
             ),
         );
         $tasks_query = new WP_Query( $tasks_args );
-        $total_minutes_spent_for_client_in_period = 0;
+        
+        // <<< CHANGE: We need two counters here as well
+        $total_minutes_spent_for_client_in_period = 0; // This will be total time
+        $total_support_minutes_in_period = 0;          // This is for billable calculation
 
         if ( $tasks_query->have_posts() ) {
             while ( $tasks_query->have_posts() ) : $tasks_query->the_post();
-                $hours_spent_str = get_post_meta( get_the_ID(), '_wcsl_hours_spent_on_task', true );
-                $total_minutes_spent_for_client_in_period += wcsl_parse_time_string_to_minutes( $hours_spent_str );
+                $task_id_inner = get_the_ID();
+                $hours_spent_str = get_post_meta( $task_id_inner, '_wcsl_hours_spent_on_task', true );
+                $minutes_for_task = wcsl_parse_time_string_to_minutes( $hours_spent_str );
+
+                // <<< CHANGE: Get the task type
+                $task_type = get_post_meta( $task_id_inner, '_wcsl_task_type', true );
+
+                $total_minutes_spent_for_client_in_period += $minutes_for_task;
+
+                // <<< CHANGE: Only add to the support counter if it's a support task
+                if ( $task_type === 'support' || empty( $task_type ) ) {
+                    $total_support_minutes_in_period += $minutes_for_task;
+                }
             endwhile;
         }
         wp_reset_postdata();
 
-        if ( $contracted_minutes_monthly > 0 && $total_minutes_spent_for_client_in_period > $contracted_minutes_monthly ) {
-             $total_billable_minutes_for_period += ( $total_minutes_spent_for_client_in_period - $contracted_minutes_monthly );
-        } elseif ( $contracted_minutes_monthly <= 0 && $total_minutes_spent_for_client_in_period > 0) {
-            $total_billable_minutes_for_period += $total_minutes_spent_for_client_in_period;
+        // <<< CHANGE: Use the new total_support_minutes_in_period for the calculation
+        if ( $contracted_minutes_monthly > 0 && $total_support_minutes_in_period > $contracted_minutes_monthly ) {
+             $total_billable_minutes_for_period += ( $total_support_minutes_in_period - $contracted_minutes_monthly );
+        } elseif ( $contracted_minutes_monthly <= 0 && $total_support_minutes_in_period > 0) {
+            $total_billable_minutes_for_period += $total_support_minutes_in_period;
         }
     }
     return $total_billable_minutes_for_period;
@@ -187,24 +202,37 @@ function wcsl_get_billable_summary_per_client_for_period( $start_date, $end_date
             ),
         );
         $tasks_query = new WP_Query( $tasks_args );
+        
+        // <<< CHANGE: Initialize two counters
         $total_minutes_spent_for_client_in_period = 0;
+        $total_support_minutes_in_period = 0;
 
         if ( $tasks_query->have_posts() ) {
             while ( $tasks_query->have_posts() ) : $tasks_query->the_post();
-                $hours_spent_str = get_post_meta( get_the_ID(), '_wcsl_hours_spent_on_task', true );
-                $total_minutes_spent_for_client_in_period += wcsl_parse_time_string_to_minutes( $hours_spent_str );
+                $task_id_inner = get_the_ID();
+                $hours_spent_str = get_post_meta( $task_id_inner, '_wcsl_hours_spent_on_task', true );
+                $minutes_for_task = wcsl_parse_time_string_to_minutes( $hours_spent_str );
+
+                // <<< CHANGE: Get the task type
+                $task_type = get_post_meta( $task_id_inner, '_wcsl_task_type', true );
+
+                $total_minutes_spent_for_client_in_period += $minutes_for_task;
+
+                // <<< CHANGE: Only add to support counter if it's a support task
+                if ( $task_type === 'support' || empty( $task_type ) ) {
+                    $total_support_minutes_in_period += $minutes_for_task;
+                }
             endwhile;
         }
         wp_reset_postdata();
 
         $client_billable_minutes_in_period = 0;
-        // Simplified billable calculation for the period:
-        // If period is longer than a month, this assumes the contracted amount applies over the whole period.
-        // A more complex pro-rata calculation would be needed for true monthly accuracy over custom ranges.
-        if ( $contracted_minutes_monthly >= 0 && $total_minutes_spent_for_client_in_period > $contracted_minutes_monthly ) {
-             $client_billable_minutes_in_period = ( $total_minutes_spent_for_client_in_period - $contracted_minutes_monthly );
-        } elseif ( $contracted_minutes_monthly < 0 && $total_minutes_spent_for_client_in_period > 0) { // No contract or invalid
-            $client_billable_minutes_in_period = $total_minutes_spent_for_client_in_period;
+        
+        // <<< CHANGE: Use the support minutes counter for the calculation
+        if ( $contracted_minutes_monthly >= 0 && $total_support_minutes_in_period > $contracted_minutes_monthly ) {
+             $client_billable_minutes_in_period = ( $total_support_minutes_in_period - $contracted_minutes_monthly );
+        } elseif ( $contracted_minutes_monthly < 0 && $total_support_minutes_in_period > 0) { // No contract or invalid
+            $client_billable_minutes_in_period = $total_support_minutes_in_period;
         }
 
 
@@ -307,4 +335,116 @@ function wcsl_get_hours_by_employee_for_period( $start_date, $end_date ) {
 }
 
 
+/**
+ * Gets total billable hours for the last N months for a line chart.
+ *
+ * @param int $num_months The number of past months to retrieve data for (e.g., 12).
+ * @return array An array suitable for Chart.js: ['labels' => [Month-Year], 'data' => [Hours]]
+ */
+function wcsl_get_billable_hours_for_past_months( $num_months = 12 ) {
+    $report_data = array(
+        'labels' => array(), // e.g., "Jan 2025", "Feb 2025"
+        'data'   => array(), // e.g., [10.5, 15.75, 8.0]
+    );
+
+    // Loop backwards from the current month for the last N months.
+    for ( $i = 0; $i < $num_months; $i++ ) {
+        // Calculate the timestamp for the month we are processing in this loop iteration.
+        // strtotime("-{$i} months") handles month and year rollovers correctly.
+        $timestamp = strtotime( date( 'Y-m-01' ) . " -{$i} months" );
+        
+        // Format the label for the chart's X-axis (e.g., "Jul 2025").
+        $report_data['labels'][] = date( 'M Y', $timestamp );
+        
+        // Get the start and end dates for the database query for this specific month.
+        $start_date = date( 'Y-m-01', $timestamp );
+        $end_date   = date( 'Y-m-t', $timestamp ); // 't' gives the last day of the month.
+
+        // We can reuse our existing helper function to get the billable minutes for this month.
+        $total_billable_minutes_for_month = 0;
+        if ( function_exists('wcsl_get_total_billable_minutes_for_period') ) {
+            $total_billable_minutes_for_month = wcsl_get_total_billable_minutes_for_period( $start_date, $end_date );
+        }
+
+        // Convert minutes to decimal hours and add to our data array.
+        $report_data['data'][] = round( $total_billable_minutes_for_month / 60, 2 );
+    }
+
+    // The loop generates months from newest to oldest, but charts look better oldest to newest.
+    // So, we reverse both arrays to get a proper chronological order.
+    $report_data['labels'] = array_reverse( $report_data['labels'] );
+    $report_data['data']   = array_reverse( $report_data['data'] );
+
+    return $report_data;
+}
+
+
+
+
+
+/**
+ * Gets the count of tasks per task category for a given date range and primary type.
+ *
+ * @param string $primary_type 'support' or 'fixing'.
+ * @param string $start_date   YYYY-MM-DD format.
+ * @param string $end_date     YYYY-MM-DD format.
+ * @return array An array suitable for Chart.js: ['labels' => [Category Names], 'data' => [Task Counts]]
+ */
+function wcsl_get_task_count_by_category( $primary_type, $start_date, $end_date ) {
+    $report_data = array(
+        'labels' => array(),
+        'data'   => array(),
+    );
+
+    // First, get all task categories that match the primary type (e.g., all 'support' categories)
+    $terms = get_terms( array(
+        'taxonomy'   => 'task_category',
+        'hide_empty' => false,
+        'meta_query' => array(
+            array(
+                'key'   => 'wcsl_billable_type',
+                'value' => $primary_type,
+            ),
+        ),
+    ) );
+
+    if ( is_wp_error( $terms ) || empty( $terms ) ) {
+        return $report_data; // No categories of this type, so no data.
+    }
+
+    // Now, for each category, count the number of tasks within the date range
+    foreach ( $terms as $term ) {
+        $task_args = array(
+            'post_type'      => 'client_task',
+            'posts_per_page' => -1,
+            'post_status'    => 'publish',
+            'fields'         => 'ids', // We only need to count, so IDs are efficient.
+            'tax_query'      => array(
+                array(
+                    'taxonomy' => 'task_category',
+                    'field'    => 'term_id',
+                    'terms'    => $term->term_id,
+                ),
+            ),
+            'meta_query'     => array(
+                array(
+                    'key'     => '_wcsl_task_date',
+                    'value'   => array( $start_date, $end_date ),
+                    'compare' => 'BETWEEN',
+                    'type'    => 'DATE',
+                ),
+            ),
+        );
+
+        $tasks_query = new WP_Query( $task_args );
+        
+        // We only add the category to the chart if it has one or more tasks
+        if ( $tasks_query->found_posts > 0 ) {
+            $report_data['labels'][] = $term->name;
+            $report_data['data'][]   = $tasks_query->found_posts;
+        }
+    }
+
+    return $report_data;
+}
 

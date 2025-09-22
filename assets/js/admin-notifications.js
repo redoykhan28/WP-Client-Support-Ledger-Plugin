@@ -1,60 +1,95 @@
 jQuery(document).ready(function($) {
-    $('.wcsl-notifications-table').on('click', '.wcsl-notification-action', function(e) {
-        e.preventDefault();
+    
+    // --- AJAX Handler for SINGLE Notification Row DELETE Action ---
+    $('.wcsl-notifications-table').on('click', 'a.wcsl-notification-action.wcsl-delete-notification-ajax', function(e) {
+        e.preventDefault(); 
 
         var $link = $(this);
-        var action = $link.data('action');
         var notificationId = $link.data('notification-id');
-        var nonce = $link.data('nonce');
+        var nonce = $link.data('nonce'); // This is 'wcsl_ajax_manage_notification_' + id
         var $row = $link.closest('tr');
 
-        if (action === 'delete') {
-            if (!confirm(wcsl_ajax_object.delete_confirm_message)) {
-                return false;
-            }
+        // Use the localized string for confirmation
+        var confirmMessage = (typeof wcsl_admin_strings !== 'undefined' && wcsl_admin_strings.delete_confirm_message) 
+                             ? wcsl_admin_strings.delete_confirm_message 
+                             : 'Are you sure you want to delete this notification?';
+        if (!confirm(confirmMessage)) { 
+            return false;
         }
         
-        $link.css('opacity', '0.5').parent().append(' <span class="spinner is-active" style="display:inline-block; float:none;"></span>');
+        $link.hide(); 
+        var $spinner = $('<span class="spinner is-active" style="display:inline-block; float:none; vertical-align:middle; margin-left:5px;"></span>');
+        $link.parent().append($spinner); 
 
         $.ajax({
-            url: wcsl_ajax_object.ajax_url,
+            url: (typeof wcsl_admin_strings !== 'undefined' ? wcsl_admin_strings.ajax_url : ajaxurl), // Fallback to global ajaxurl
             type: 'POST',
             data: {
-                action: 'wcsl_manage_notification_ajax', // WordPress AJAX action hook
-                wcsl_ajax_action: action, // Our specific sub-action
+                action: 'wcsl_manage_notification_ajax', 
+                wcsl_ajax_action: 'delete',             
                 notification_id: notificationId,
-                _ajax_nonce: nonce // Nonce
+                _ajax_nonce: nonce                     
             },
             success: function(response) {
-                $link.siblings('.spinner').remove();
-                $link.css('opacity', '1');
-
+                $spinner.remove(); 
                 if (response.success) {
-                    // Update UI based on action
-                    if (action === 'mark_read') {
-                        $row.removeClass('wcsl-notification-unread').addClass('wcsl-notification-read');
-                        $row.find('td:last-child').html(response.data.new_status_html); // Update status text
-                        $link.parent().html(response.data.new_action_link_html); // Replace action link
-                    } else if (action === 'mark_unread') {
-                        $row.removeClass('wcsl-notification-read').addClass('wcsl-notification-unread');
-                        $row.find('td:last-child').html(response.data.new_status_html);
-                        $link.parent().html(response.data.new_action_link_html);
-                    } else if (action === 'delete') {
-                        $row.fadeOut(300, function() { $(this).remove(); });
-                        // Optional: Add a "Notification deleted" message somewhere, or just rely on row removal
-                    }
-                    // TODO: Update unread count bubble in the menu (more complex, requires another AJAX call or page part refresh)
-                    // For now, it will update on next full page load.
-                    console.log(response.data.message); // For debugging
+                    $row.css('background-color', '#ffbaba'); 
+                    $row.fadeOut(400, function() { 
+                        $(this).remove(); 
+                        var noNotifMsg = (typeof wcsl_admin_strings !== 'undefined' && wcsl_admin_strings.no_notifications_found)
+                                         ? wcsl_admin_strings.no_notifications_found
+                                         : 'No notifications found.';
+                        if ($('#the-list tr:not(.no-items)').length === 0 && $('#the-list tr.no-items').length === 0) {
+                            $('#the-list').append('<tr class="no-items"><td class="colspanchange" colspan="5">' + noNotifMsg + '</td></tr>');
+                        }
+                        // Unread count badge will update on next full page load.
+                    });
+                    // console.log('WCSL AJAX Delete Success:', response.data.message);
                 } else {
-                    alert('Error: ' + response.data.message);
+                    $link.show(); 
+                    alert('Error: ' + (response.data && response.data.message ? response.data.message : 'Unknown error occurred.'));
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
-                $link.siblings('.spinner').remove();
-                $link.css('opacity', '1');
+                $spinner.remove();
+                $link.show(); 
                 alert('AJAX Error: ' + textStatus + ' - ' + errorThrown);
             }
         });
     });
+
+    // --- Bulk Action Checkbox Handling ---
+    var $notificationForm = $('#wcsl-notifications-form');
+    if ($notificationForm.length) {
+        var $selectAllTop = $notificationForm.find('#cb-select-all-1');
+        var $selectAllBottom = $notificationForm.find('#cb-select-all-2');
+        var $itemCheckboxes = $notificationForm.find('#the-list input[type="checkbox"][name="notification_ids[]"]');
+
+        $selectAllTop.on('click', function() { /* ... as before ... */ });
+        $selectAllBottom.on('click', function() { /* ... as before ... */ });
+        $itemCheckboxes.on('click', function() { /* ... as before ... */ });
+
+        $('#doaction, #doaction2', $notificationForm).on('click', function(e){
+            var bulkAction = $(this).closest('.bulkactions').find('select[name^="action"]').val();
+            
+            var noSelectedMsgBulk = (typeof wcsl_admin_strings !== 'undefined' && wcsl_admin_strings.no_notifications_selected)
+                                 ? wcsl_admin_strings.no_notifications_selected
+                                 : 'Please select one or more notifications to perform a bulk action.';
+            var bulkDeleteConfirmMsgJs = (typeof wcsl_admin_strings !== 'undefined' && wcsl_admin_strings.bulk_delete_confirm_message)
+                                 ? wcsl_admin_strings.bulk_delete_confirm_message
+                                 : 'Are you sure you want to delete these selected notifications? This action cannot be undone.';
+
+            if ($itemCheckboxes.filter(':checked').length === 0 && bulkAction !== '-1' && bulkAction !== '') {
+                alert(noSelectedMsgBulk);
+                e.preventDefault(); 
+                return;
+            }
+
+            if (bulkAction === 'bulk_delete') {
+                if (!confirm(bulkDeleteConfirmMsgJs)) {
+                    e.preventDefault();
+                }
+            }
+        });
+    }
 });

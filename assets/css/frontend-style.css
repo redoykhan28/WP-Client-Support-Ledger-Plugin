@@ -143,7 +143,9 @@
 
 /* --- Report Container Styles (using new primary color) --- */
 .wcsl-report-container {
-    background-color: var(--wcsl-container-bg, #39618C); /* Fallback to default */;
+    background-color: var(--wcsl-container-bg, #39618C);
+    /* Fallback to default */
+    ;
     color: #ffffff;
     padding: 30px;
     margin: 40px 0;
@@ -212,9 +214,12 @@
 }
 
 .wcsl-frontend-filter-form input[type="submit"].button {
-    background-color: var(--wcsl-button-bg, #39618C); /* Fallback */
-    color: var(--wcsl-button-text, #fff);       /* Fallback */
-    border-color: var(--wcsl-button-bg, #39618C);  /* Fallback or calculated darker shade */
+    background-color: var(--wcsl-button-bg, #39618C);
+    /* Fallback */
+    color: var(--wcsl-button-text, #fff);
+    /* Fallback */
+    border-color: var(--wcsl-button-bg, #39618C);
+    /* Fallback or calculated darker shade */
     padding: 10px 20px;
     /* More horizontal padding for button */
     border-radius: 6px;
@@ -301,9 +306,11 @@
 }
 
 .wcsl-report-actions .button.wcsl-print-button {
-    background-color: white; /* Example: White button with colored border */
+    background-color: white;
+    /* Example: White button with colored border */
     border: 2px solid white;
-    color: #333; /* Text color matches border */
+    color: #333;
+    /* Text color matches border */
     padding: 10px 20px;
     text-decoration: none;
     border-radius: 6px;
@@ -454,7 +461,7 @@
     border-color: var(--wcsl-pagination-active-bg, #39618C);
 }
 
-.wcsl-pagination .page-numbers:hover{
+.wcsl-pagination .page-numbers:hover {
 
     opacity: 0.9;
 
@@ -475,25 +482,33 @@
     align-items: center;
     gap: 10px;
 }
+
 .wcsl-frontend-client-search-form input[type="search"] {
     padding: 10px 12px;
     border-radius: 6px;
     border: 1px solid #dcdcdc;
     font-size: 14px;
-    flex-grow: 1; /* Allow search input to take available space */
+    flex-grow: 1;
+    /* Allow search input to take available space */
 }
+
 .wcsl-frontend-client-search-form .spinner {
-    display: inline-block; /* Initially hidden by JS, shown when loading */
-    width: 20px;           /* Adjust size as needed */
+    display: inline-block;
+    /* Initially hidden by JS, shown when loading */
+    width: 20px;
+    /* Adjust size as needed */
     height: 20px;
-    border: 3px solid rgba(57, 97, 140, 0.2); /* Light version of your primary color #39618C */
+    border: 3px solid rgba(57, 97, 140, 0.2);
+    /* Light version of your primary color #39618C */
     border-radius: 50%;
-    border-top-color: #39618C; /* Your primary color */
+    border-top-color: #39618C;
+    /* Your primary color */
     animation: wcslSpinner 0.8s ease-in-out infinite;
     -webkit-animation: wcslSpinner 0.8s ease-in-out infinite;
     margin-left: 10px;
     vertical-align: middle;
-    float: none; /* Ensure it doesn't float if previously set */
+    float: none;
+    /* Ensure it doesn't float if previously set */
 }
 
 @keyframes wcslSpinner {
@@ -507,14 +522,17 @@
         -webkit-transform: rotate(360deg);
     }
 }
+
 #wcsl_client_summary_ajax_container .wcsl-loading-message,
 #wcsl_client_summary_ajax_container .wcsl-error-message {
     text-align: center;
     padding: 20px;
-    background-color: #fff; /* So it's visible on colored bg */
+    background-color: #fff;
+    /* So it's visible on colored bg */
     border-radius: 8px;
     color: #555;
 }
+
 #wcsl_client_summary_ajax_container .wcsl-error-message {
     color: #c00;
     border: 1px solid #f5c6cb;
@@ -598,4 +616,23 @@
         width: 100%;
         text-align: center;
     }
+}
+
+
+/* --- Styles for Shortcode Admin Errors --- */
+.wcsl-shortcode-error code {
+    background-color: rgba(0, 0, 0, 0.07);
+    padding: 2px 5px;
+    border-radius: 3px;
+    font-family: monospace;
+}
+
+.wcsl-shortcode-error strong {
+    color: #664d03;
+}
+
+.wcsl-shortcode-error a {
+    color: #664d03;
+    font-weight: bold;
+    text-decoration: underline;
 }

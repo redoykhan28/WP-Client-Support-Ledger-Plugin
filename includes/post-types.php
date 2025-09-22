@@ -60,6 +60,48 @@ add_action( 'init', 'wcsl_register_client_cpt' );
 
 
 
+/**
+ * Register a custom post type called "employee".
+ */
+function wcsl_register_employee_cpt() {
+    $labels = array(
+        'name'                  => _x( 'Employees', 'Post type general name', 'wp-client-support-ledger' ),
+        'singular_name'         => _x( 'Employee', 'Post type singular name', 'wp-client-support-ledger' ),
+        'menu_name'             => _x( 'Employees', 'Admin Menu text', 'wp-client-support-ledger' ),
+        'name_admin_bar'        => _x( 'Employee', 'Add New on Toolbar', 'wp-client-support-ledger' ),
+        'add_new'               => __( 'Add New', 'wp-client-support-ledger' ),
+        'add_new_item'          => __( 'Add New Employee', 'wp-client-support-ledger' ),
+        'new_item'              => __( 'New Employee', 'wp-client-support-ledger' ),
+        'edit_item'             => __( 'Edit Employee', 'wp-client-support-ledger' ),
+        'view_item'             => __( 'View Employee', 'wp-client-support-ledger' ),
+        'all_items'             => __( 'All Employees', 'wp-client-support-ledger' ),
+        'search_items'          => __( 'Search Employees', 'wp-client-support-ledger' ),
+        'not_found'             => __( 'No employees found.', 'wp-client-support-ledger' ),
+        'not_found_in_trash'    => __( 'No employees found in Trash.', 'wp-client-support-ledger' ),
+    );
+
+    $args = array(
+        'labels'             => $labels,
+        'public'             => false, // Typically, employees don't have public-facing individual pages
+        'publicly_queryable' => false,
+        'show_ui'            => true,  // Show in admin UI
+        'show_in_menu'       => false, // We will add it to our custom menu
+        'query_var'          => true,
+        'rewrite'            => array( 'slug' => 'employee' ),
+        'capability_type'    => 'post', // Or a custom capability if needed
+        'has_archive'        => false,
+        'hierarchical'       => false,
+        'menu_position'      => null,
+        'supports'           => array( 'title' ), // 'title' will be Employee Name
+        'show_in_rest'       => true, // Good for future API use
+    );
+
+    register_post_type( 'employee', $args );
+}
+add_action( 'init', 'wcsl_register_employee_cpt' );
+
+
+
 
 /**
  * Register a custom post type called "client_task".
@@ -103,3 +145,105 @@ function wcsl_register_client_task_cpt() {
     register_post_type( 'client_task', $args );
 }
 add_action( 'init', 'wcsl_register_client_task_cpt' );
+
+
+/**
+ * Register a custom taxonomy called "Task Type" (internally 'task_category').
+ */
+function wcsl_register_task_category_taxonomy() {
+    $labels = array(
+        'name'              => _x( 'Task Types', 'taxonomy general name', 'wp-client-support-ledger' ),
+        'singular_name'     => _x( 'Task Type', 'taxonomy singular name', 'wp-client-support-ledger' ),
+        'search_items'      => __( 'Search Task Types', 'wp-client-support-ledger' ),
+        'all_items'         => __( 'All Task Types', 'wp-client-support-ledger' ),
+        'parent_item'       => __( 'Parent Task Type', 'wp-client-support-ledger' ),
+        'parent_item_colon' => __( 'Parent Task Type:', 'wp-client-support-ledger' ),
+        'edit_item'         => __( 'Edit Task Type', 'wp-client-support-ledger' ),
+        'update_item'       => __( 'Update Task Type', 'wp-client-support-ledger' ),
+        'add_new_item'      => __( 'Add New Task Type', 'wp-client-support-ledger' ),
+        'new_item_name'     => __( 'New Task Type Name', 'wp-client-support-ledger' ),
+        'menu_name'         => __( 'Task Types', 'wp-client-support-ledger' ),
+    );
+
+    $args = array(
+        'hierarchical'      => true, // Makes it behave like categories (parent/child) rather than tags.
+        'labels'            => $labels,
+        'show_ui'           => true, // Show the UI in the admin.
+        'show_admin_column' => true, // Show a column for it on the main "All Tasks" list.
+        'query_var'         => true,
+        'rewrite'           => array( 'slug' => 'task-type' ),
+        'show_in_rest'      => true, // Important for REST API and Gutenberg.
+    );
+
+    register_taxonomy( 'task_category', array( 'client_task' ), $args );
+}
+add_action( 'init', 'wcsl_register_task_category_taxonomy' );
+
+
+/**
+ * --------------------------------------------------------------------------
+ * Add custom field ('billable_type') to our 'task_category' taxonomy.
+ * --------------------------------------------------------------------------
+ */
+
+// 1. Function to add the field to the "Add New Task Type" form.
+function wcsl_add_billable_type_field_to_task_category( $taxonomy ) {
+    ?>
+    <div class="form-field term-billable-type-wrap">
+        <label for="term-billable-type"><?php esc_html_e( 'Primary Type', 'wp-client-support-ledger' ); ?></label>
+        <select name="wcsl_billable_type" id="term-billable-type">
+            <option value="support" selected><?php esc_html_e( 'Support (Billable)', 'wp-client-support-ledger' ); ?></option>
+            <option value="fixing"><?php esc_html_e( 'Fixing (Non-Billable)', 'wp-client-support-ledger' ); ?></option>
+        </select>
+        <p><?php esc_html_e( 'Classify this category as either billable (Support) or non-billable (Fixing). This determines which dropdown it appears in on the task creation screen.', 'wp-client-support-ledger' ); ?></p>
+    </div>
+    <?php
+}
+add_action( 'task_category_add_form_fields', 'wcsl_add_billable_type_field_to_task_category' );
+
+
+// 2. Function to add the field to the "Edit Task Type" form.
+function wcsl_edit_billable_type_field_for_task_category( $term, $taxonomy ) {
+    $billable_type = get_term_meta( $term->term_id, 'wcsl_billable_type', true );
+    if ( empty( $billable_type ) ) {
+        $billable_type = 'support'; // Default to support
+    }
+    ?>
+    <tr class="form-field term-billable-type-wrap">
+        <th scope="row">
+            <label for="term-billable-type"><?php esc_html_e( 'Primary Type', 'wp-client-support-ledger' ); ?></label>
+        </th>
+        <td>
+            <select name="wcsl_billable_type" id="term-billable-type">
+                <option value="support" <?php selected( $billable_type, 'support' ); ?>><?php esc_html_e( 'Support (Billable)', 'wp-client-support-ledger' ); ?></option>
+                <option value="fixing" <?php selected( $billable_type, 'fixing' ); ?>><?php esc_html_e( 'Fixing (Non-Billable)', 'wp-client-support-ledger' ); ?></option>
+            </select>
+            <p class="description"><?php esc_html_e( 'Classify this category as either billable (Support) or non-billable (Fixing).', 'wp-client-support-ledger' ); ?></p>
+        </td>
+    </tr>
+    <?php
+}
+add_action( 'task_category_edit_form_fields', 'wcsl_edit_billable_type_field_for_task_category', 10, 2 );
+
+
+// 3. Function to save the custom field value.
+function wcsl_save_task_category_billable_type( $term_id ) {
+    if ( ! isset( $_POST['wcsl_billable_type'] ) ) {
+        return;
+    }
+    $billable_type = sanitize_key( $_POST['wcsl_billable_type'] );
+    if ( in_array( $billable_type, array( 'support', 'fixing' ) ) ) {
+        update_term_meta( $term_id, 'wcsl_billable_type', $billable_type );
+    }
+}
+add_action( 'created_task_category', 'wcsl_save_task_category_billable_type' );
+add_action( 'edited_task_category', 'wcsl_save_task_category_billable_type' );
+
+
+/**
+ * Removes the default "Task Types" meta box from the task edit screen.
+ */
+function wcsl_remove_task_category_meta_box() {
+    remove_meta_box( 'task_categorydiv', 'client_task', 'side' );
+}
+add_action( 'admin_menu', 'wcsl_remove_task_category_meta_box' );

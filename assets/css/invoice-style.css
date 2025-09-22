@@ -1,0 +1,124 @@
+/* assets/css/invoice-style.css */
+@page {
+    margin: 25mm; /* Standard margin for invoices */
+    @top-left { content: ""; }
+    @top-center { content: ""; }
+    @top-right { content: ""; }
+    @bottom-left { content: ""; }
+    @bottom-center { content: ""; }
+    @bottom-right { content: ""; }
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 11pt;
+    line-height: 1.5;
+    color: #333;
+}
+
+.invoice-box {
+    max-width: 800px;
+    margin: auto;
+    padding: 30px;
+    border: 1px solid #eee;
+    box-shadow: 0 0 10px rgba(0, 0, 0, .15);
+}
+
+.invoice-header {
+    display: table;
+    width: 100%;
+    margin-bottom: 40px;
+}
+.invoice-header .logo {
+    display: table-cell;
+    vertical-align: top;
+    width: 25%;
+}
+.invoice-header .logo img {
+    max-width: 150px;
+    max-height: 80px;
+}
+.invoice-header .company-details {
+    display: table-cell;
+    vertical-align: top;
+    text-align: right;
+}
+.company-details strong {
+    display: block;
+    font-size: 1.2em;
+}
+
+.invoice-meta-details {
+    display: table;
+    width: 100%;
+    margin-bottom: 40px;
+}
+.invoice-meta-details .billing-to,
+.invoice-meta-details .invoice-info {
+    display: table-cell;
+    vertical-align: top;
+    width: 50%;
+}
+.invoice-info table {
+    width: 100%;
+}
+.invoice-info table td {
+    padding: 5px;
+    text-align: right;
+}
+.invoice-info table tr td:first-child {
+    text-align: left;
+    font-weight: bold;
+}
+
+
+.line-items-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    margin-bottom: 40px;
+}
+.line-items-table thead th {
+    background: #f9f9f9;
+    border-bottom: 2px solid #ddd;
+    padding: 10px;
+    font-weight: 600;
+}
+.line-items-table tbody td {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+.line-items-table thead th:last-child,
+.line-items-table tbody td:last-child {
+    text-align: right;
+}
+.line-items-table tfoot td {
+    padding: 5px 10px;
+    font-weight: bold;
+    text-align: right;
+}
+.line-items-table tfoot tr.grand-total td {
+    border-top: 2px solid #555;
+    font-size: 1.2em;
+}
+
+.invoice-footer {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+    font-size: 0.9em;
+    color: #777;
+}
+
+/* Print-specific adjustments */
+@media print {
+    body {
+        font-size: 10pt;
+    }
+    .invoice-box {
+        box-shadow: none;
+        border: none;
+        padding: 0;
+        margin: 0;
+    }
+}

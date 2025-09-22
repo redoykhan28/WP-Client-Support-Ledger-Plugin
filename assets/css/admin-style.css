@@ -18,12 +18,9 @@
     margin-top: 30px;
 }
 
-
-
 .description {
     font-weight: 700;
 }
-
 
 /* In assets/css/admin-style.css */
 .wcsl-notifications-table tr.wcsl-notification-unread td {
@@ -35,11 +32,6 @@
     /* Light yellow for unread */
 }
 
-
-
-/* WCSL Reports Page Styles */
-/* In assets/css/admin-style.css */
-
 /* WCSL Reports Page Styles */
 .wcsl-reports-page .wcsl-reports-grid {
     display: grid;
@@ -47,7 +39,6 @@
     gap: 20px;
     margin-top: 20px;
     margin-bottom: 50px;
-    /* <<< ADD OR INCREASE THIS to push footer down */
 }
 
 .wcsl-reports-page .wcsl-report-block {
@@ -67,10 +58,8 @@
 .wcsl-reports-page .wcsl-chart-container {
     padding: 20px;
     height: 300px;
-    /* Or adjust as needed */
     position: relative;
     min-height: 250px;
-    /* Ensure it has some minimum height even if data is small */
 }
 
 .wcsl-reports-page .wcsl-chart-container canvas {
@@ -84,13 +73,10 @@
     text-align: center;
     color: #777;
     display: flex;
-    /* For vertical centering of text */
     align-items: center;
     justify-content: center;
     height: 100%;
-    /* Fill container height */
     min-height: 100px;
-    /* Ensure some visible height for the message */
 }
 
 /* Data Metric Container (for Total Billable Hours) */
@@ -98,7 +84,6 @@
     padding: 20px;
     text-align: center;
     min-height: 150px;
-    /* Give it some height */
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -116,4 +101,322 @@
     font-size: 14px;
     color: #555;
     margin-top: 0;
+}
+
+.wcsl-tasks-log-table tr.wcsl-task-type-fixing td {
+    background-color: #FEFBEA !important;
+}
+
+/* Styles for the new full-width report block */
+.wcsl-reports-page .wcsl-reports-grid-full-width {
+    margin-top: 20px;
+}
+
+/* Style for the filter bar on Monthly Overview */
+.wcsl-table-search-form {
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+/* Styles for Report Block with Tabs */
+.wcsl-report-header-with-tabs {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.wcsl-report-header-with-tabs h2 {
+    border-bottom: none;
+    padding: 12px 0;
+}
+
+.wcsl-tabs-nav {
+    display: flex;
+    gap: 4px;
+}
+
+.wcsl-tab-link {
+    background-color: #f6f7f7;
+    border: 1px solid #ccc;
+    padding: 6px 12px;
+    cursor: pointer;
+    font-size: 13px;
+    border-radius: 3px;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.wcsl-tab-link:hover {
+    background-color: #f0f0f1;
+}
+
+.wcsl-tab-link.active {
+    background-color: #fff;
+    border-bottom-color: #fff;
+    margin-bottom: -1px;
+    font-weight: 600;
+}
+
+/* WCSL Dashboard Styles */
+.wcsl-dashboard {
+    margin-bottom: 40px;
+}
+
+.wcsl-dashboard-metrics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.wcsl-metric-box {
+    background-color: #fff;
+    border: 1px solid #e5e5e5;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, .04);
+    padding: 20px;
+    border-left: 4px solid #39618C;
+}
+
+.wcsl-metric-box h3 {
+    margin: 0 0 10px 0;
+    font-size: 14px;
+    color: #555;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.wcsl-metric-box .metric-value {
+    font-size: 32px;
+    font-weight: 600;
+    color: #2c3e50;
+    line-height: 1.2;
+}
+
+.wcsl-dashboard-columns {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+}
+
+.wcsl-dashboard-panel {
+    background-color: #fff;
+    border: 1px solid #e5e5e5;
+}
+
+.wcsl-dashboard-panel h3 {
+    font-size: 16px;
+    padding: 12px 15px;
+    margin: 0;
+    border-bottom: 1px solid #eee;
+}
+
+.wcsl-dashboard-panel .inside {
+    padding: 0 15px 15px;
+}
+
+.wcsl-dashboard-watchlist-table {
+    width: 100%;
+    margin-top: 15px;
+    border-collapse: collapse;
+}
+
+.wcsl-dashboard-watchlist-table th,
+.wcsl-dashboard-watchlist-table td {
+    padding: 8px;
+    border-bottom: 1px solid #f0f0f1;
+    text-align: left;
+    font-size: 13px;
+}
+
+.wcsl-dashboard-watchlist-table th {
+    font-weight: 600;
+}
+
+/* <<< FINAL CORRECTED PROGRESS BAR STYLES >>> */
+.wcsl-dashboard-watchlist-table .wcsl-usage-bar-container {
+    width: 100px;
+    height: 12px;
+    background-color: #e9ecef;
+    border-radius: 3px;
+    overflow: hidden;
+    display: block;
+    /* Ensure it's treated as a block */
+}
+
+.wcsl-dashboard-watchlist-table .wcsl-usage-bar {
+    height: 12px;
+    /* Explicitly set the height */
+    background-color: #f0ad4e;
+    border-radius: 3px;
+    display: block;
+    /* Ensure it's treated as a block */
+}
+
+.wcsl-dashboard-watchlist-table .wcsl-usage-bar.danger {
+    background-color: #d9534f;
+}
+
+.wcsl-recent-activity-list {
+    list-style: none;
+    margin: 15px 0 0;
+    padding: 0;
+}
+
+.wcsl-recent-activity-list li {
+    padding: 10px 0;
+    border-bottom: 1px solid #f0f0f1;
+    font-size: 13px;
+}
+
+.wcsl-recent-activity-list li:last-child {
+    border-bottom: none;
+}
+
+.wcsl-recent-activity-list .activity-time {
+    display: block;
+    color: #777;
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+/* Styles for Status Badges */
+.wcsl-status-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: .25rem;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.wcsl-status-badge.status-in-review {
+    background-color: #f0ad4e;
+    /* Orange */
+}
+
+.wcsl-status-badge.status-pending {
+    background-color: #FF7B7B;
+    /* Light Red */
+}
+
+.wcsl-status-badge.status-in-progress {
+    background-color: #0275d8;
+    /* Blue */
+}
+
+.wcsl-status-badge.status-onhold {
+    background-color: #d9534f;
+    /* Red */
+}
+
+.wcsl-status-badge.status-completed {
+    background-color: #5cb85c;
+    /* Green */
+}
+
+.wcsl-status-badge.status-billed {
+    background-color: #292b2c;
+    /* Dark Grey / Black */
+}
+
+.wcsl-status-badge.status-unknown {
+    background-color: #6c757d;
+    /* Neutral Grey */
+}
+
+/*
+ * Styles for Invoice Status Badges
+ */
+.wcsl-invoice-status-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    /* Aligns better with links */
+    border-radius: .25rem;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.wcsl-invoice-status-badge.status-invoiced {
+    background-color: #f0ad4e;
+    /* Orange */
+}
+
+.wcsl-invoice-status-badge.status-paid {
+    background-color: #5cb85c;
+    /* Green */
+}
+
+.wcsl-invoice-status-badge.status-void {
+    background-color: #6c757d;
+    /* Neutral Grey */
+}
+
+/* Make action links smaller */
+.wcsl-billing-actions .action-link {
+    font-size: 11px;
+    text-decoration: none;
+    margin: 0 4px;
+}
+
+/*
+ * Styles for Invoice Status Badges
+ */
+.wcsl-invoice-status-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    border-radius: .25rem;
+    color: #fff !important;
+    /* Force white text */
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* More specific selectors to override default table styles */
+.wcsl-invoice-status-badge.status-unpaid {
+    background-color: #f0ad4e !important;
+    /* Orange */
+}
+
+.wp-list-table td .wcsl-invoice-status-badge.status-paid {
+    background-color: #5cb85c !important;
+    /* Green */
+}
+
+.wp-list-table td .wcsl-invoice-status-badge.status-void {
+    background-color: #d9534f !important;
+    /* Red */
+}
+
+
+/* Make action links smaller */
+.wcsl-billing-actions .action-link {
+    font-size: 11px;
+    text-decoration: none;
+    margin: 0 4px;
+}
+
+/* Style for highlighting billable hours */
+.wcsl-billable-hours {
+    font-weight: 700; /* Bold */
+    color: #d9534f;   /* Red */
 }
