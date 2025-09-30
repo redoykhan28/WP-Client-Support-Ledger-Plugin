@@ -4,6 +4,31 @@ jQuery(document).ready(function ($) {
     var currentRequest = null;
     var $globalLoader = $('.wcsl-global-loader'); // Cache the global loader element
 
+
+    // --- NEW: Reusable Confirmation Modal Function ---
+    function showConfirmationModal(onConfirmCallback) {
+    var $modalOverlay = $('#wcsl-confirmation-modal-overlay');
+    var $confirmBtn = $modalOverlay.find('.wcsl-modal-confirm');
+    var $cancelBtn = $modalOverlay.find('.wcsl-modal-cancel');
+
+    // Show the modal
+    $modalOverlay.show().addClass('is-visible');
+
+    // Handle the CONFIRM action
+    $confirmBtn.off('click').one('click', function() {
+        if (typeof onConfirmCallback === 'function') {
+            onConfirmCallback();
+        }
+        $modalOverlay.removeClass('is-visible').hide();
+    });
+
+    // Handle the CANCEL action
+    $cancelBtn.off('click').one('click', function() {
+        $modalOverlay.removeClass('is-visible').hide();
+    });
+    }
+
+
     /**
      * ===================================================================
      * Core AJAX Content Loading Function
@@ -28,8 +53,14 @@ jQuery(document).ready(function ($) {
                 if (response.success) {
                     $container.html(response.data.html);
                     updatePageTitle(url); // Set title after content loads
+
+                    // --- THIS IS THE FIX ---
+                    // Re-initialize the Add/Edit Task form scripts if the form is now on the page.
                     if (typeof initializeAddTaskForm === 'function') { initializeAddTaskForm(); }
+                    
+                    // Re-initialize the Reports scripts if the charts are now on the page.
                     if (typeof initializePortalReports === 'function') { initializePortalReports(response.data.scripts_data); }
+                    
                     if (!isPopState && targetContainer === mainContentContainer) { history.pushState({ path: url }, '', url); }
                     if (targetContainer === mainContentContainer) { updateSidebarMenu(url); }
                 } else { $container.html('<p class="wcsl-panel-notice error">Error: ' + (response.data.message || 'Could not load content.') + '</p>'); }
@@ -53,24 +84,18 @@ jQuery(document).ready(function ($) {
         var $titleContainer = $('#wcsl-dynamic-page-title');
         if (!$titleContainer.length) return;
 
-        // --- START OF FIX ---
-        // The previous method `url.split('?')[1]` was unreliable.
-        // This new method uses the browser's built-in URL object, which is much safer.
         var fullUrl = new URL(url);
         var urlParams = new URLSearchParams(fullUrl.search);
-        // --- END OF FIX ---
 
         var view = urlParams.get('wcsl_view') || 'dashboard';
         var titleText = 'Dashboard'; // Default title
 
-        // Determine title based on view
         if (view === 'dashboard') {
             var date = new Date();
             var month = date.toLocaleString('default', { month: 'long' });
             var year = date.getFullYear();
             titleText = 'Dashboard for ' + month + ' ' + year;
         } else if (view === 'month_details') {
-            // This title is now handled by its own template, so we don't need JS for it.
             titleText = '';
         } else if (view === 'add_task') {
             titleText = 'Add New Task';
@@ -86,7 +111,6 @@ jQuery(document).ready(function ($) {
             titleText = 'Notifications';
         }
 
-        // Only set the title if it's not for a page that handles its own title (like month_details)
         if (titleText) {
             $titleContainer.html('<h2 class="wcsl-page-title">' + titleText + '</h2>');
         } else {
@@ -172,33 +196,33 @@ jQuery(document).ready(function ($) {
     });
 
     // 5. "My Tasks" DELETE action
-    $(portalWrapper).on('click', '.wcsl-my-tasks-wrap .wcsl-action-link.delete', function (e) {
-        e.preventDefault();
-        var $link = $(this), $row = $link.closest('tr'), taskId = $link.data('task-id'), nonce = $link.data('nonce');
-        if (!confirm('Are you sure you want to permanently delete this task?')) { return; }
+$(portalWrapper).on('click', '.wcsl-my-tasks-wrap .wcsl-action-link.delete', function (e) {
+    e.preventDefault();
+    var $link = $(this), $row = $link.closest('tr'), taskId = $link.data('task-id'), nonce = $link.data('nonce');
+    
+    // --- MODIFIED: Replaced confirm() with our new modal ---
+    showConfirmationModal(function() {
+        // This entire AJAX call is the "callback" that runs only on confirm.
         $row.css('opacity', '0.5'); $link.text('Deleting...');
         $.ajax({
             url: wcsl_employee_portal_obj.ajax_url, type: 'POST',
             data: { action: 'wcsl_employee_delete_task', task_id: taskId, nonce: nonce },
             success: function (response) {
                 if (response.success) {
-                    $row.css('background-color', '#ffbaba').fadeOut(400, function () {
-                        $(this).remove();
-                        if ($('.wcsl-my-tasks-wrap tbody tr').length === 0) {
-                            $('#my-tasks-ajax-content').html('<div class="wcsl-portal-section"><p class="wcsl-panel-notice">You do not have any tasks assigned to you.</p></div>');
-                        }
-                    });
+                    Toastify({ text: 'Task successfully deleted.', duration: 3000, gravity: 'top', position: 'right', className: 'wcsl-toast-success' }).showToast();
+                    $row.css('background-color', '#ffbaba').fadeOut(400, function () { $(this).remove(); if ($('.wcsl-my-tasks-wrap tbody tr').length === 0) { $('#my-tasks-ajax-content').html('<div class="wcsl-portal-section"><p class="wcsl-panel-notice">You do not have any tasks assigned to you.</p></div>'); } });
                 } else {
-                    alert('Error: ' + (response.data.message || 'Could not delete task.'));
+                    Toastify({ text: 'Error: ' + (response.data.message || 'Could not delete task.'), duration: 5000, gravity: 'top', position: 'right', className: 'wcsl-toast-error' }).showToast();
                     $row.css('opacity', '1'); $link.text('Delete');
                 }
             },
             error: function () {
-                alert('An unexpected network error occurred.');
+                Toastify({ text: 'An unexpected network error occurred.', duration: 5000, gravity: 'top', position: 'right', className: 'wcsl-toast-error' }).showToast();
                 $row.css('opacity', '1'); $link.text('Delete');
             }
         });
     });
+});
 
     // 6. Browser Back/Forward buttons
     $(window).on('popstate', function (e) {
@@ -211,85 +235,79 @@ jQuery(document).ready(function ($) {
 
     // 7. Single notification action (Mark Read/Unread, Delete)
     $(portalWrapper).on('click', 'a.wcsl-notification-action', function (e) {
-        e.preventDefault();
-        var $link = $(this), $row = $link.closest('tr'), notifId = $link.data('id'), actionType = $link.data('action'), nonce = $link.data('nonce');
-
-        if (actionType === 'delete' && !confirm('Are you sure?')) return;
+    e.preventDefault();
+    var $link = $(this), $row = $link.closest('tr'), notifId = $link.data('id'), actionType = $link.data('action'), nonce = $link.data('nonce');
+    
+    var ajaxCall = function() {
         $row.css('opacity', 0.5);
-
         $.ajax({
             url: wcsl_employee_portal_obj.ajax_url, type: 'POST',
-            data: {
-                action: 'wcsl_employee_manage_notification',
-                notification_id: notifId,
-                wcsl_action: actionType,
-                nonce: nonce
-            },
+            data: { action: 'wcsl_employee_manage_notification', notification_id: notifId, wcsl_action: actionType, nonce: nonce },
             success: function (response) {
                 if (response.success) {
-                    var currentUrl = location.href;
-                    var newUrl = new URL(currentUrl);
+                    var newUrl = new URL(location.href);
                     newUrl.searchParams.set('wcsl_view', 'notifications_table');
                     newUrl.searchParams.delete('paged');
                     loadContent(newUrl.href, true, '#employee-notifications-ajax-content');
                     updateNotificationBadge(response.data.new_count);
                 } else {
-                    alert(response.data.message || 'An error occurred.');
+                    Toastify({ text: response.data.message || 'An error occurred.', duration: 5000, gravity: 'top', position: 'right', className: 'wcsl-toast-error' }).showToast();
                     $row.css('opacity', 1);
                 }
             },
             error: function () {
-                alert('A network error occurred.');
+                Toastify({ text: 'A network error occurred.', duration: 5000, gravity: 'top', position: 'right', className: 'wcsl-toast-error' }).showToast();
                 $row.css('opacity', 1);
             }
         });
-    });
+    };
+
+    if (actionType === 'delete') {
+        // --- MODIFIED: Use the modal only for the delete action ---
+        showConfirmationModal(ajaxCall);
+    } else {
+        // For other actions, run the AJAX call directly
+        ajaxCall();
+    }
+});
 
     // 8. Bulk action form submission
     $(portalWrapper).on('submit', '#wcsl-employee-notifications-form', function (e) {
-        e.preventDefault();
-        var $form = $(this);
-        var $container = $form.closest('.wcsl-ajax-container');
-        var bulkAction = $form.find('.wcsl-bulk-action-select').val();
-        var checkedIds = $form.find('.wcsl-item-checkbox:checked').map(function () { return this.value; }).get();
-        var paged = $form.find('input[name="paged"]').val() || 1;
+    e.preventDefault();
+    var $form = $(this), $container = $form.closest('.wcsl-ajax-container'), bulkAction = $form.find('.wcsl-bulk-action-select').val(), checkedIds = $form.find('.wcsl-item-checkbox:checked').map(function () { return this.value; }).get(), paged = $form.find('input[name="paged"]').val() || 1;
+    if (bulkAction === '-1' || checkedIds.length === 0) {
+        Toastify({ text: 'Please select an action and at least one notification.', duration: 5000, gravity: 'top', position: 'right', className: 'wcsl-toast-info' }).showToast();
+        return;
+    }
 
-        if (bulkAction === '-1' || checkedIds.length === 0) {
-            alert('Please select an action and at least one notification.');
-            return;
-        }
-        if (bulkAction === 'bulk_delete' && !confirm('Are you sure you want to delete the selected items?')) {
-            return;
-        }
-
+    var ajaxCall = function() {
         $container.addClass('wcsl-loading');
-
         $.ajax({
             url: wcsl_employee_portal_obj.ajax_url, type: 'POST',
-            data: {
-                action: 'wcsl_employee_bulk_notifications',
-                nonce: wcsl_employee_portal_obj.nonce,
-                bulk_action: bulkAction,
-                notification_ids: checkedIds,
-                paged: paged
-            },
+            data: { action: 'wcsl_employee_bulk_notifications', nonce: wcsl_employee_portal_obj.nonce, bulk_action: bulkAction, notification_ids: checkedIds, paged: paged },
             success: function (response) {
                 if (response.success) {
                     $container.html(response.data.html);
                     updateNotificationBadge(response.data.new_count);
+                    Toastify({ text: 'Bulk action completed.', duration: 3000, gravity: 'top', position: 'right', className: 'wcsl-toast-success' }).showToast();
                 } else {
-                    alert(response.data.message || 'An error occurred.');
+                    Toastify({ text: response.data.message || 'An error occurred.', duration: 5000, gravity: 'top', position: 'right', className: 'wcsl-toast-error' }).showToast();
                 }
             },
             error: function () {
-                alert('A network error occurred.');
+                Toastify({ text: 'A network error occurred.', duration: 5000, gravity: 'top', position: 'right', className: 'wcsl-toast-error' }).showToast();
             },
-            complete: function () {
-                $container.removeClass('wcsl-loading');
-            }
+            complete: function () { $container.removeClass('wcsl-loading'); }
         });
-    });
-
+    };
+    
+    if (bulkAction === 'bulk_delete') {
+         // --- MODIFIED: Use the modal only for the bulk delete action ---
+        showConfirmationModal(ajaxCall);
+    } else {
+        ajaxCall();
+    }
+});
     // 9. Checkbox "Select All" functionality
     $(portalWrapper).on('change', '.wcsl-select-all-checkbox', function () {
         var $this = $(this);

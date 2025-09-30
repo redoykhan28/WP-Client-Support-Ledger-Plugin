@@ -1411,8 +1411,143 @@
     }
 }
 
+
 /* ===================================================================
-   18. Responsive Styles
+   18. NEW: Toast Notification Theme Styles
+   =================================================================== */
+
+/* This targets the main toast element */
+.toastify {
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1), 0 3px 3px rgba(0, 0, 0, 0.05);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    padding: 12px 20px;
+}
+
+/* --- SUCCESS TOAST (Green) --- */
+/*
+ * We are creating a new class here that we will use in our JS.
+ * This ensures we don't have to rely on the library's default color classes.
+*/
+.wcsl-toast-success {
+    background: #5cb85c; /* A nice default green */
+    /* If you have a specific success color variable, you can use it here */
+}
+
+/* --- ERROR TOAST (Red) --- */
+.wcsl-toast-error {
+    background: #d9534f; /* A nice default red */
+    /* If you have a specific error color variable, you can use it here */
+}
+
+/* --- WARNING/INFO TOAST (Uses your dynamic primary color) --- */
+.wcsl-toast-info {
+    /* This will automatically match your portal's theme color! */
+    background: var(--wcsl-primary-color);
+}
+
+/* ===================================================================
+   19. NEW: Confirmation Modal Styles
+   =================================================================== */
+
+.wcsl-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: 100000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+
+.wcsl-modal-overlay.is-visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.wcsl-modal {
+    background-color: var(--wcsl-bg-color-card);
+    border-radius: var(--card-border-radius);
+    width: 100%;
+    max-width: 450px;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+    transform: scale(0.95);
+    transition: transform 0.2s ease;
+}
+
+.wcsl-modal-overlay.is-visible .wcsl-modal {
+    transform: scale(1);
+}
+
+.wcsl-modal-title {
+    font-size: var(--font-size-large);
+    font-weight: var(--font-weight-bold);
+    margin: 0;
+    padding: var(--spacing-medium) var(--spacing-large);
+    border-bottom: 1px solid var(--wcsl-border-color);
+}
+
+.wcsl-modal-body {
+    padding: var(--spacing-large);
+    color: var(--wcsl-text-color-secondary);
+}
+
+.wcsl-modal-body p {
+    margin: 0;
+}
+
+.wcsl-modal-footer {
+    padding: var(--spacing-medium);
+    border-top: 1px solid var(--wcsl-border-color);
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--spacing-small);
+    background-color: #f9f9f9;
+    border-bottom-left-radius: var(--card-border-radius);
+    border-bottom-right-radius: var(--card-border-radius);
+}
+
+/* --- New Button Styles --- */
+.wcsl-portal-button-secondary {
+    background-color: #6c757d;
+    color: #fff;
+    padding: var(--spacing-small) var(--spacing-medium);
+    border: none;
+    border-radius: 6px;
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+.wcsl-portal-button-secondary:hover {
+    opacity: 0.8;
+}
+
+.wcsl-portal-button-danger {
+    background-color: #d9534f;
+    color: #fff;
+    padding: var(--spacing-small) var(--spacing-medium);
+    border: none;
+    border-radius: 6px;
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+.wcsl-portal-button-danger:hover {
+    opacity: 0.8;
+}
+
+
+
+/* ===================================================================
+   19. Responsive Styles
    =================================================================== */
 
 @media (max-width: 960px) {

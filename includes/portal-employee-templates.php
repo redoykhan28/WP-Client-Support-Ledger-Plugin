@@ -79,6 +79,23 @@ function wcsl_render_employee_portal_main( $user ) {
                 ?>
             </div>
         </div>
+
+        </div> <?php // End #wcsl-portal-main-content ?>
+    </div> <?php // End #wcsl-portal-main ?>
+
+    <!-- NEW: Reusable Confirmation Modal -->
+    <div class="wcsl-modal-overlay" id="wcsl-confirmation-modal-overlay" style="display: none;">
+        <div class="wcsl-modal">
+            <h3 class="wcsl-modal-title"><?php esc_html_e( 'Are you sure?', 'wp-client-support-ledger' ); ?></h3>
+            <div class="wcsl-modal-body">
+                <p><?php esc_html_e( 'This action cannot be undone.', 'wp-client-support-ledger' ); ?></p>
+            </div>
+            <div class="wcsl-modal-footer">
+                <button class="wcsl-portal-button-secondary wcsl-modal-cancel"><?php esc_html_e( 'Cancel', 'wp-client-support-ledger' ); ?></button>
+                <button class="wcsl-portal-button-danger wcsl-modal-confirm"><?php esc_html_e( 'Delete', 'wp-client-support-ledger' ); ?></button>
+            </div>
+        </div>
+    </div>
         
     </div> <?php // End #wcsl-portal-app-wrapper ?>
     <?php

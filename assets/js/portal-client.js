@@ -1,5 +1,26 @@
 jQuery(document).ready(function ($) {
 
+    // --- NEW: Reusable Confirmation Modal Function ---
+function showConfirmationModal(onConfirmCallback) {
+    var $modalOverlay = $('#wcsl-confirmation-modal-overlay');
+    var $confirmBtn = $modalOverlay.find('.wcsl-modal-confirm');
+    var $cancelBtn = $modalOverlay.find('.wcsl-modal-cancel');
+
+    $modalOverlay.show().addClass('is-visible');
+
+    $confirmBtn.off('click').one('click', function() {
+        if (typeof onConfirmCallback === 'function') {
+            onConfirmCallback();
+        }
+        $modalOverlay.removeClass('is-visible').hide();
+    });
+
+    $cancelBtn.off('click').one('click', function() {
+        $modalOverlay.removeClass('is-visible').hide();
+    });
+}
+
+
     /**
      * *** NEW FUNCTION ***
      * Updates the notification badge in the sidebar menu.
@@ -21,38 +42,27 @@ jQuery(document).ready(function ($) {
     }
 
     // Use event delegation on the main content container for AJAX-loaded content
-    $('#wcsl-portal-main-content').on('click', '.notification-actions a', function (e) {
-        e.preventDefault();
+  $('#wcsl-portal-main-content').on('click', '.notification-actions a', function (e) {
+    e.preventDefault();
 
-        // Prevent multiple clicks while one is processing
-        if ($(this).hasClass('processing')) {
-            return;
-        }
-        $(this).addClass('processing');
+    if ($(this).hasClass('processing')) { return; }
+    $(this).addClass('processing');
 
-        var $link = $(this);
-        var href = $link.attr('href');
-        var $row = $link.closest('tr');
+    var $link = $(this);
+    var href = $link.attr('href');
+    var $row = $link.closest('tr');
+    var urlParams = new URLSearchParams(href.split('?')[1]);
+    var notificationId = urlParams.get('notification_id');
+    var nonce = urlParams.get('_wcsl_nonce');
+    var action = urlParams.get('wcsl_action');
 
-        // Extract parameters from the URL
-        var urlParams = new URLSearchParams(href.split('?')[1]);
-        var notificationId = urlParams.get('notification_id');
-        var nonce = urlParams.get('_wcsl_nonce');
-        var action = urlParams.get('wcsl_action');
+    if (!notificationId || !nonce || !action) {
+        alert('An error occurred. Missing required parameters.');
+        $link.removeClass('processing');
+        return;
+    }
 
-        if (!notificationId || !nonce || !action) {
-            alert('An error occurred. Missing required parameters.');
-            $link.removeClass('processing');
-            return;
-        }
-
-        // Confirm deletion
-        if (action === 'delete' && !confirm('Are you sure you want to delete this notification?')) {
-            $link.removeClass('processing');
-            return;
-        }
-
-        // Show a visual indicator
+    var ajaxCall = function() {
         var $spinner = $('<span class="spinner is-active" style="display:inline-block; float:none; vertical-align:middle; margin-left:5px;"></span>');
         $link.parent().append($spinner);
         $link.parent().find('a, .action-divider').css('visibility', 'hidden');
@@ -61,29 +71,24 @@ jQuery(document).ready(function ($) {
             url: wcsl_client_portal_obj.ajax_url,
             type: 'POST',
             data: {
-                action: 'wcsl_manage_client_notification_ajax', // New AJAX handler
+                action: 'wcsl_manage_client_notification_ajax',
                 notification_id: notificationId,
                 _ajax_nonce: nonce,
                 wcsl_action: action
             },
             success: function (response) {
                 if (response.success) {
-
-                    // *** NEW: Update the badge with the new count from the response ***
                     if (typeof response.data.new_count !== 'undefined') {
                         updateNotificationBadge(response.data.new_count);
                     }
-
                     if (action === 'delete') {
                         $row.css('background-color', '#ffbaba').fadeOut(400, function () {
                             $(this).remove();
-                            // Check if table is empty and show message
                             if ($('#wcsl-notifications-table tbody tr').length === 0) {
-                                $('#wcsl-notifications-table').closest('.wcsl-portal-section').html('<p class="wcsl-panel-notice">You have no notifications.</p>');
+                                $('#wcsl-notifications-table').closest('.wcsl-data-table-wrapper').html('<p class="wcsl-panel-notice">You have no notifications.</p>');
                             }
                         });
                     } else {
-                        // For 'mark_read' or 'mark_unread', just replace the row content
                         $row.replaceWith(response.data.html);
                     }
                 } else {
@@ -100,5 +105,16 @@ jQuery(document).ready(function ($) {
                 $link.removeClass('processing');
             }
         });
-    });
+    };
+
+    if (action === 'delete') {
+        // --- MODIFIED: Use the new modal instead of confirm() ---
+        showConfirmationModal(ajaxCall);
+        // We need to remove the processing class here since the call is now async
+        $link.removeClass('processing');
+    } else {
+        // For other actions, run the AJAX call directly
+        ajaxCall();
+    }
+});
 });

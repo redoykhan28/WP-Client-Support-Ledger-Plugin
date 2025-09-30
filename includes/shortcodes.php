@@ -28,20 +28,24 @@ function wcsl_enqueue_portal_scripts() {
             // Enqueue assets for the EMPLOYEE
             elseif ( in_array( 'wcsl_employee', (array) $user->roles ) ) {
                 $current_view = isset( $_GET['wcsl_view'] ) ? sanitize_key( $_GET['wcsl_view'] ) : 'dashboard';
-                
+
+                // --- NEW: Enqueue Toastify library from CDN ---
+                wp_enqueue_style( 'toastify-css', 'https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css', array(), '1.12.0' );
+                wp_enqueue_script( 'toastify-js', 'https://cdn.jsdelivr.net/npm/toastify-js', array(), '1.12.0', true );
+
                 // --- ALWAYS LOAD ALL EMPLOYEE SCRIPTS ---
-                wp_enqueue_script( 'wcsl-portal-employee-js', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js/portal-employee.js', array( 'jquery' ), '1.0.3', true ); // Version bump
+                // MODIFIED: Added 'toastify-js' as a dependency for our main script
+                wp_enqueue_script( 'wcsl-portal-employee-js', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js/portal-employee.js', array( 'jquery', 'toastify-js' ), '1.0.4', true );
                 wp_localize_script( 'wcsl-portal-employee-js', 'wcsl_employee_portal_obj', array( 'ajax_url' => admin_url('admin-ajax.php'), 'nonce' => wp_create_nonce('wcsl_employee_portal_nonce') ) );
 
                 wp_enqueue_media();
                 wp_enqueue_script( 'wcsl-portal-add-task-js', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js/portal-add-task.js', array( 'jquery' ), '1.0.2', true );
                 
                 wp_enqueue_script('chartjs', 'https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js', array(), '4.4.1', true);
-                wp_enqueue_script('wcsl-portal-reports-js', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js/portal-reports.js', array( 'jquery', 'chartjs' ), '1.0.1', true); // Version bump
+                wp_enqueue_script('wcsl-portal-reports-js', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js/portal-reports.js', array( 'jquery', 'chartjs' ), '1.0.1', true);
 
                 // --- LOCALIZE SCRIPT DATA CONDITIONALLY ---
                 
-                // Localize data for the Add/Edit Task form
                 $task_id_for_js = ('edit_task' === $current_view && isset($_GET['task_id'])) ? intval($_GET['task_id']) : 0;
                 wp_localize_script('wcsl-portal-add-task-js', 'wcsl_add_task_obj', array(
                     'ajax_url' => admin_url('admin-ajax.php'),
@@ -49,7 +53,6 @@ function wcsl_enqueue_portal_scripts() {
                     'post_id'  => $task_id_for_js
                 ));
                 
-                // Only do the heavy data calculation for reports on the initial load of the reports page
                 if ( 'reports' === $current_view ) {
                     $today_for_reports = current_time('Y-m-d');
                     $default_start_for_reports = date('Y-m-d', strtotime('-29 days', strtotime($today_for_reports)));
@@ -139,11 +142,8 @@ function wcsl_render_portal_content() {
     }
     
     wp_enqueue_style( 'wcsl-portal-style', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/css/portal-style.css', array(), '1.0.6' );
-    $portal_settings = get_option('wcsl_portal_settings', array());
-    $primary_color = !empty($portal_settings['primary_color']) ? sanitize_hex_color($portal_settings['primary_color']) : '#2271b1';
-    $bg_color      = !empty($portal_settings['background_color']) ? sanitize_hex_color($portal_settings['background_color']) : '#f0f2f5';
-    $custom_css = ".wcsl-portal-wrapper { background-color: {$bg_color}; } .wcsl-login-form-container input[type=\"submit\"].wcsl-login-button, .wcsl-portal-header, .wcsl-portal-sidebar .wcsl-sidebar-widget ul li.active a { background-color: {$primary_color}; }";
-    wp_add_inline_style( 'wcsl-portal-style', $custom_css );
+    
+    // NOTE: The old inline style block has been moved to the wp_head action in settings.php, so it is removed from here.
 
     echo '<div class="wcsl-portal-wrapper">';
 
@@ -151,6 +151,27 @@ function wcsl_render_portal_content() {
         wcsl_display_portal_login_form();
     } 
     else {
+        // --- NEW: Handle the success message for task creation ---
+        if ( ( in_array( 'wcsl_employee', (array) $user->roles ) || in_array( 'administrator', (array) $user->roles ) ) && isset( $_GET['task_added'] ) && $_GET['task_added'] === 'true' ) {
+            $toast_message = esc_js( __( 'Task successfully created!', 'wp-client-support-ledger' ) );
+            $inline_script = "
+                document.addEventListener('DOMContentLoaded', function() {
+                    Toastify({
+                        text: '{$toast_message}',
+                        duration: 5000,
+                        close: true,
+                        gravity: 'top',
+                        position: 'right',
+                        backgroundColor: '#5cb85c', // A standard success green
+                        stopOnFocus: true
+                    }).showToast();
+                });
+            ";
+            // We attach this inline script to our main employee script handle
+            wp_add_inline_script( 'wcsl-portal-employee-js', $inline_script );
+        }
+        // --- END NEW BLOCK ---
+
         if ( in_array( 'wcsl_client', (array) $user->roles ) ) {
             wcsl_render_client_portal_main( $user );
         } elseif ( in_array( 'wcsl_employee', (array) $user->roles ) ) {
